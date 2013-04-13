@@ -8,6 +8,8 @@ class Application(Frame):
         print "Play!"
     def pause(self):
         print "Pause!"
+    def stop(self):
+        print "Stop!"
     def next(self):
         print "Next!"
     def open(self):
@@ -15,51 +17,69 @@ class Application(Frame):
 
     # Botoes e Imagens
     def createWidgets(self):
-        self.QUIT = Button(self)
-        self.QUIT["text"] = "QUIT"
-        self.QUIT["fg"]   = "red"
-        self.QUIT["command"] =  self.quit
-        self.QUIT.pack({"side": "left"})
+        QUIT = Button(self)
+        QUIT["text"] = "QUIT"
+        QUIT["fg"]   = "red"
+        QUIT["command"] =  self.quit
+        QUIT.pack({"side": "left"})
 
-        self.bplay = Button(self)
-        self.bplay["text"] = "Play"
-        self.bplay["fg"]   = "darkgreen"
-        self.bplay["command"] = self.play
-        self.bplay.pack({"side": "left"})
+        bplay = Button(self)
+        bplay["text"] = "Play"
+        bplay["fg"]   = "darkgreen"
+        bplay["command"] = self.play
+        bplay.config(image=bstart_img)
+        bplay.pack({"side": "left"})
 
-        self.bpause = Button(self)
-        self.bpause["text"] = "Pause"
-        self.bpause["command"] = self.pause
-        self.bpause.pack({"side": "left"})
+        bpause = Button(self)
+        bpause["text"] = "Pause"
+        bpause["command"] = self.pause
+        bpause.config(image=bpause_img)
+        bpause.pack({"side": "left"})
 
-        self.bnext = Button(self)
-        self.bnext["text"] = "Next"
-        self.bnext["command"] = self.next
-        self.bnext.pack({"side": "left"})
+        bstop = Button(self)
+        bstop["text"] = "Stop"
+        bstop["command"] = self.stop
+        bstop.config(image=bstop_img)
+        bstop.pack({"side": "left"})
 
-        self.bopen = Button(self)
-        self.bopen["text"] = "Open"
-        self.bopen["command"] = self.open
-        self.bopen.pack({"side": "left"})
+        bnext = Button(self)
+        bnext["text"] = "Next"
+        bnext["command"] = self.next
+        bnext.config(image=bnext_img)
+        bnext.pack({"side": "left"})
+
+        bopen = Button(self)
+        bopen["text"] = "Open"
+        bopen["command"] = self.open
+        bopen.config(image=bopen_img)
+        bopen.pack({"side": "left"})
+
+        canvas = Canvas(self, bg="black", width=537, height=321)
+        canvas.pack()
+        
+        canvas.create_image(537, 321, image=mips_blocks)
+        canvas["bg"]="white"
 
     def __init__(self, master=None):
         Frame.__init__(self, master)
         self.pack()
         self.createWidgets()
 
+
+# Inicializa o Tkinter
 root = Tk()
 root.title("mips simulator")
-# root.geometry("640x510")
+root.geometry("800x600")
 
+# Carrega Imagens
+mips_blocks = ImageTk.PhotoImage(file="images/mips_color.png")
+bstart_img = ImageTk.PhotoImage(file="images/start.png")
+bstop_img = ImageTk.PhotoImage(file="images/stop.png")
+bpause_img = ImageTk.PhotoImage(file="images/pause.png")
+bnext_img = ImageTk.PhotoImage(file="images/next.png")
+bopen_img = ImageTk.PhotoImage(file="images/open.png")
+
+#Lanca o nosso app, seu loop principal e finaliza o programa
 app = Application(master=root)
-app.pack()
-
-canvas = Canvas(app, bg="black")#, width=500, height=500
-canvas.pack()
-
-photoimage = ImageTk.PhotoImage(file="images/mips_color.png")
-canvas.create_image(150, 150, image=photoimage)
-canvas["bg"]="white"
-
 app.mainloop()
 root.destroy()
