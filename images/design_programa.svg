@@ -1589,9 +1589,9 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
-     inkscape:cx="566.7035"
-     inkscape:cy="283.63034"
-     inkscape:current-layer="g12020"
+     inkscape:cx="450.84002"
+     inkscape:cy="290.84622"
+     inkscape:current-layer="g12010"
      showgrid="false"
      units="px"
      inkscape:window-width="1842"
@@ -1742,7 +1742,7 @@
                transform="translate(89.035507,525.27722)">
               <path
                  transform="matrix(1.0016064,0,0,1,-20.52208,22.5)"
-                 d="m 375,237.5 c 0,20.71068 -11.19288,37.5 -25,37.5 -13.80712,0 -25,-16.78932 -25,-37.5 0,-20.71068 11.19288,-37.5 25,-37.5 13.80712,0 25,16.78932 25,37.5 z"
+                 d="m 375,237.5 a 25,37.5 0 1 1 -50,0 25,37.5 0 1 1 50,0 z"
                  sodipodi:ry="37.5"
                  sodipodi:rx="25"
                  sodipodi:cy="237.5"
@@ -1944,7 +1944,7 @@
                sodipodi:cy="82.5"
                sodipodi:rx="2.5"
                sodipodi:ry="2.5"
-               d="m 235,82.5 c 0,1.380712 -1.11929,2.5 -2.5,2.5 -1.38071,0 -2.5,-1.119288 -2.5,-2.5 0,-1.380712 1.11929,-2.5 2.5,-2.5 1.38071,0 2.5,1.119288 2.5,2.5 z"
+               d="m 235,82.5 a 2.5,2.5 0 1 1 -5,0 2.5,2.5 0 1 1 5,0 z"
                transform="translate(121.28251,552.77722)" />
             <path
                sodipodi:type="arc"
@@ -1954,7 +1954,7 @@
                sodipodi:cy="82.5"
                sodipodi:rx="2.5"
                sodipodi:ry="2.5"
-               d="m 235,82.5 c 0,1.380712 -1.11929,2.5 -2.5,2.5 -1.38071,0 -2.5,-1.119288 -2.5,-2.5 0,-1.380712 1.11929,-2.5 2.5,-2.5 1.38071,0 2.5,1.119288 2.5,2.5 z"
+               d="m 235,82.5 a 2.5,2.5 0 1 1 -5,0 2.5,2.5 0 1 1 5,0 z"
                transform="translate(-43.717492,662.77722)" />
             <path
                inkscape:connector-curvature="0"
@@ -2223,7 +2223,7 @@
                sodipodi:cy="82.5"
                sodipodi:rx="2.5"
                sodipodi:ry="2.5"
-               d="m 235,82.5 c 0,1.380712 -1.11929,2.5 -2.5,2.5 -1.38071,0 -2.5,-1.119288 -2.5,-2.5 0,-1.380712 1.11929,-2.5 2.5,-2.5 1.38071,0 2.5,1.119288 2.5,2.5 z"
+               d="m 235,82.5 a 2.5,2.5 0 1 1 -5,0 2.5,2.5 0 1 1 5,0 z"
                transform="translate(291.28251,642.77722)" />
             <path
                sodipodi:type="arc"
@@ -2233,7 +2233,7 @@
                sodipodi:cy="82.5"
                sodipodi:rx="2.5"
                sodipodi:ry="2.5"
-               d="m 235,82.5 c 0,1.380712 -1.11929,2.5 -2.5,2.5 -1.38071,0 -2.5,-1.119288 -2.5,-2.5 0,-1.380712 1.11929,-2.5 2.5,-2.5 1.38071,0 2.5,1.119288 2.5,2.5 z"
+               d="m 235,82.5 a 2.5,2.5 0 1 1 -5,0 2.5,2.5 0 1 1 5,0 z"
                transform="translate(281.28251,472.77722)" />
             <path
                id="path11748"
@@ -2307,7 +2307,7 @@
                sodipodi:cy="82.5"
                sodipodi:rx="2.5"
                sodipodi:ry="2.5"
-               d="m 235,82.5 c 0,1.380712 -1.11929,2.5 -2.5,2.5 -1.38071,0 -2.5,-1.119288 -2.5,-2.5 0,-1.380712 1.11929,-2.5 2.5,-2.5 1.38071,0 2.5,1.119288 2.5,2.5 z"
+               d="m 235,82.5 a 2.5,2.5 0 1 1 -5,0 2.5,2.5 0 1 1 5,0 z"
                transform="translate(286.28251,732.77722)" />
             <path
                inkscape:connector-curvature="0"
@@ -2360,7 +2360,7 @@
                sodipodi:cy="82.5"
                sodipodi:rx="2.5"
                sodipodi:ry="2.5"
-               d="m 235,82.5 c 0,1.380712 -1.11929,2.5 -2.5,2.5 -1.38071,0 -2.5,-1.119288 -2.5,-2.5 0,-1.380712 1.11929,-2.5 2.5,-2.5 1.38071,0 2.5,1.119288 2.5,2.5 z"
+               d="m 235,82.5 a 2.5,2.5 0 1 1 -5,0 2.5,2.5 0 1 1 5,0 z"
                transform="translate(451.28251,687.77722)" />
             <path
                id="path11792"
@@ -2700,7 +2700,7 @@
                sodipodi:cy="82.5"
                sodipodi:rx="2.5"
                sodipodi:ry="2.5"
-               d="m 235,82.5 c 0,1.380712 -1.11929,2.5 -2.5,2.5 -1.38071,0 -2.5,-1.119288 -2.5,-2.5 0,-1.380712 1.11929,-2.5 2.5,-2.5 1.38071,0 2.5,1.119288 2.5,2.5 z"
+               d="m 235,82.5 a 2.5,2.5 0 1 1 -5,0 2.5,2.5 0 1 1 5,0 z"
                transform="translate(451.28251,632.77722)" />
             <path
                inkscape:connector-curvature="0"
@@ -2740,7 +2740,7 @@
                sodipodi:cy="82.5"
                sodipodi:rx="2.5"
                sodipodi:ry="2.5"
-               d="m 235,82.5 c 0,1.380712 -1.11929,2.5 -2.5,2.5 -1.38071,0 -2.5,-1.119288 -2.5,-2.5 0,-1.380712 1.11929,-2.5 2.5,-2.5 1.38071,0 2.5,1.119288 2.5,2.5 z"
+               d="m 235,82.5 a 2.5,2.5 0 1 1 -5,0 2.5,2.5 0 1 1 5,0 z"
                transform="translate(121.28251,702.77722)" />
           </g>
           <g
@@ -2962,7 +2962,7 @@
                id="text12018"> </text>
             <g
                id="g12020"
-               transform="translate(-14.465861,0)">
+               transform="translate(-9.1325287,0)">
               <text
                  id="text12022"
                  style="font-size:13.80165291px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
@@ -3413,7 +3413,7 @@
              id="text12334"
              style="font-size:13.80165291px;font-style:normal;font-weight:bold;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
              y="17.408354"
-             x="116.11391"
+             x="10.769853"
              xml:space="preserve">Clock Corrente:</text>
           <text
              id="text12336"
@@ -3431,13 +3431,13 @@
              id="text12342"
              style="font-size:13.80165291px;font-style:normal;font-weight:bold;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
              y="40.069229"
-             x="185.42221"
+             x="10.35203"
              xml:space="preserve">PC</text>
           <text
              id="text12344"
              style="font-size:13.80165291px;font-style:normal;font-weight:bold;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
              y="40.069229"
-             x="200.12396"
+             x="25.053782"
              xml:space="preserve">:</text>
           <text
              id="text12346"
@@ -3456,7 +3456,7 @@
              style="font-size:13.80165291px;font-style:normal;font-weight:bold;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
              y="62.730103"
              x="10.35124"
-             xml:space="preserve">Número de Instruções concluídas:</text>
+             xml:space="preserve">Instruções concluídas:</text>
           <text
              id="text12354"
              style="font-size:13.80165291px;font-style:normal;font-weight:bold;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
@@ -3473,7 +3473,7 @@
              id="text12360"
              style="font-size:13.80165291px;font-style:normal;font-weight:bold;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
              y="85.390976"
-             x="52.056232"
+             x="10.35203"
              xml:space="preserve">Produtividade do pipeline:</text>
           <text
              id="text12362"
@@ -4964,7 +4964,7 @@
                id="text9534"
                style="font-size:13.80165291px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
                y="49.143059"
-               x="27.772598"
+               x="33.105934"
                xml:space="preserve">Endereço</text>
             <text
                id="text9536"
@@ -4976,7 +4976,7 @@
                id="text9538"
                style="font-size:13.80165291px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
                y="49.143059"
-               x="129.81021"
+               x="135.14352"
                xml:space="preserve">Valor</text>
             <text
                id="text9540"
@@ -5123,7 +5123,7 @@
           <text
              xml:space="preserve"
              x="48.455803"
-             y="40.054405"
+             y="40.05579"
              style="font-size:13.80165291px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
              id="text9967">0</text>
           <text
@@ -5888,23 +5888,27 @@
          id="g11424"
          transform="translate(559.83328,588.41754)">
         <text
-           id="text11426"
-           style="font-size:13.80165291px;font-style:normal;font-weight:bold;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
-           y="17.408354"
-           x="116.11391"
-           xml:space="preserve">Clock Corrente:</text>
-        <text
            id="text11428"
            style="font-size:13.80165291px;font-style:normal;font-weight:bold;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
            y="17.408354"
            x="203.87442"
            xml:space="preserve"> </text>
-        <text
-           id="text11430"
-           style="font-size:13.80165291px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
-           y="17.408354"
-           x="207.47485"
-           xml:space="preserve">?</text>
+        <g
+           id="g4056"
+           transform="translate(-44.674807,0)">
+          <text
+             xml:space="preserve"
+             x="55.443871"
+             y="17.408354"
+             style="font-size:13.80165291px;font-style:normal;font-weight:bold;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
+             id="text11426">Clock Corrente:</text>
+          <text
+             xml:space="preserve"
+             x="146.8051"
+             y="17.408354"
+             style="font-size:13.80165291px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
+             id="text11430">?</text>
+        </g>
         <text
            id="text11432"
            style="font-size:13.80165291px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
@@ -5912,83 +5916,98 @@
            x="213.7756"
            xml:space="preserve"> </text>
         <text
-           id="text11434"
-           style="font-size:13.80165291px;font-style:normal;font-weight:bold;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
-           y="40.069229"
-           x="185.42221"
-           xml:space="preserve">PC</text>
-        <text
-           id="text11436"
-           style="font-size:13.80165291px;font-style:normal;font-weight:bold;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
-           y="40.069229"
-           x="200.12396"
-           xml:space="preserve">:</text>
-        <text
            id="text11438"
            style="font-size:13.80165291px;font-style:normal;font-weight:bold;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
            y="40.069229"
            x="203.87442"
            xml:space="preserve"> </text>
-        <text
-           id="text11440"
-           style="font-size:13.80165291px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
-           y="40.069229"
-           x="207.47485"
-           xml:space="preserve">?</text>
+        <g
+           id="g4060"
+           transform="translate(-68.296853,0)">
+          <g
+             transform="translate(-1.4409414,0)"
+             id="g4051">
+            <text
+               id="text11434"
+               style="font-size:13.80165291px;font-style:normal;font-weight:bold;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
+               y="40.069229"
+               x="80.089035"
+               xml:space="preserve">PC</text>
+            <text
+               id="text11436"
+               style="font-size:13.80165291px;font-style:normal;font-weight:bold;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
+               y="40.069229"
+               x="94.790894"
+               xml:space="preserve">:</text>
+            <text
+               id="text11440"
+               style="font-size:13.80165291px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
+               y="40.069229"
+               x="102.14182"
+               xml:space="preserve">?</text>
+          </g>
+        </g>
         <text
            id="text11442"
            style="font-size:13.80165291px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
            y="40.069229"
            x="213.7756"
            xml:space="preserve"> </text>
-        <text
-           id="text11444"
-           style="font-size:13.80165291px;font-style:normal;font-weight:bold;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
-           y="62.730103"
-           x="10.35124"
-           xml:space="preserve">Número de Instruções concluídas:</text>
-        <text
-           id="text11446"
-           style="font-size:13.80165291px;font-style:normal;font-weight:bold;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
-           y="62.730103"
-           x="203.87442"
-           xml:space="preserve"> </text>
-        <text
-           id="text11448"
-           style="font-size:13.80165291px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
-           y="62.730103"
-           x="207.47485"
-           xml:space="preserve">?</text>
-        <text
-           id="text11450"
-           style="font-size:13.80165291px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
-           y="62.730103"
-           x="213.7756"
-           xml:space="preserve"> </text>
-        <text
-           id="text11452"
-           style="font-size:13.80165291px;font-style:normal;font-weight:bold;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
-           y="85.390976"
-           x="52.056232"
-           xml:space="preserve">Produtividade do pipeline:</text>
-        <text
-           id="text11454"
-           style="font-size:13.80165291px;font-style:normal;font-weight:bold;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
-           y="85.390976"
-           x="203.87442"
-           xml:space="preserve"> </text>
-        <text
-           id="text11456"
-           style="font-size:13.80165291px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
-           y="85.390976"
-           x="207.47485"
-           xml:space="preserve">?</text>
-        <text
-           id="text11458"
-           style="font-size:13.80165291px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
-           y="85.390976"
-           x="213.7756"
-           xml:space="preserve"> </text>
+        <g
+           id="g4072">
+          <text
+             xml:space="preserve"
+             x="10.35124"
+             y="62.730103"
+             style="font-size:13.80165291px;font-style:normal;font-weight:bold;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
+             id="text11444">Instruções concluídas:</text>
+          <text
+             xml:space="preserve"
+             x="203.87442"
+             y="62.730103"
+             style="font-size:13.80165291px;font-style:normal;font-weight:bold;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
+             id="text11446"> </text>
+          <text
+             xml:space="preserve"
+             x="142.14177"
+             y="62.730103"
+             style="font-size:13.80165291px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
+             id="text11448">?</text>
+          <text
+             xml:space="preserve"
+             x="213.7756"
+             y="62.730103"
+             style="font-size:13.80165291px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
+             id="text11450"> </text>
+        </g>
+        <g
+           id="g4066"
+           transform="translate(-41.704992,0)">
+          <text
+             xml:space="preserve"
+             x="52.056232"
+             y="85.390976"
+             style="font-size:13.80165291px;font-style:normal;font-weight:bold;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
+             id="text11452">Produtividade do pipeline:</text>
+          <text
+             xml:space="preserve"
+             x="203.87442"
+             y="85.390976"
+             style="font-size:13.80165291px;font-style:normal;font-weight:bold;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
+             id="text11454"> </text>
+          <text
+             xml:space="preserve"
+             x="208.80818"
+             y="85.390976"
+             style="font-size:13.80165291px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
+             id="text11456">?</text>
+          <text
+             xml:space="preserve"
+             x="213.7756"
+             y="85.390976"
+             style="font-size:13.80165291px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"
+             id="text11458"> </text>
+        </g>
         <text
            id="text11460"
            style="font-size:13.80165291px;font-style:normal;font-weight:normal;text-align:start;text-anchor:start;fill:#000000;font-family:Calibri"

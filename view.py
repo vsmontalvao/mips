@@ -13,25 +13,156 @@ class Application(Frame):
     fonte_maior = "Arial 10"
     lblbgcolor = "white"
     linr0 = 465
-    colr0 = 895
+    colr0 = 890
     reglindist = 28.5
     regcoldist = 84.3
 
-    def say_hi(self):
-        print "hi there, everyone!"
+    def quit(self):
+        self.quit
     def play(self):
         print "Play!"
+        if self.lclock["text"] == "?":
+            self.lclock["text"] = "0"
+        if self.lclock["text"] == "0":
+            self.lclock["text"] = "?"
     def pause(self):
         print "Pause!"
     def stop(self):
         print "Stop!"
+        self.labels_iniciais()
+        self.canvas.update()
     def next(self):
-        print "Next!"
+        print "next!"
+        if self.lclock["text"] == "?":
+            self.lclock["text"] = "0"
+        else:
+            self.lclock["text"] = int(self.lclock["text"]) + 1
+
     def open(self):
         print "Open!"
-    # Botoes e Imagens
+
+    def labels_iniciais(self):
+        canvas = self.canvas
+        self.lclock = E1_instrucao = Label(self, text="l1:addi R10, R0, 100", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=20)
+        E1inst_window = canvas.create_window(51, self.linha_instrucoes, anchor=NW, window=E1_instrucao)
+
+        self.E2_instrucao = E2_instrucao = Label(self, text="l2:sw R0, 24(R0)", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=20)
+        E2inst_window = canvas.create_window(215, self.linha_instrucoes, anchor=NW, window=E2_instrucao)
+        self.E2_instrucao = E3_instrucao = Label(self, text="l3:sw R0, 28(R0)", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=20)
+        E3inst_window = canvas.create_window(379, self.linha_instrucoes, anchor=NW, window=E3_instrucao)
+        self.E2_instrucao = E4_instrucao = Label(self, text="l4:lw R6,28(R0)", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=20)
+        E4inst_window = canvas.create_window(543, self.linha_instrucoes, anchor=NW, window=E4_instrucao)
+        self.E2_instrucao = E5_instrucao = Label(self, text="l5:mul R7,R6,R6", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=20)
+        E5inst_window = canvas.create_window(707, self.linha_instrucoes, anchor=NW, window=E5_instrucao)
+
+        self.E1_controle = E1_controle = Label(self, text="", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=20)
+        E1cont_window = canvas.create_window(51, self.linha_controle, anchor=NW, window=E1_controle)
+        self.E2_controle = E2_controle = Label(self, text="", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=20)
+        E2cont_window = canvas.create_window(215, self.linha_controle, anchor=NW, window=E2_controle)
+        self.E3_controle = E3_controle = Label(self, text="", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=20)
+        E3cont_window = canvas.create_window(379, self.linha_controle, anchor=NW, window=E3_controle)
+        self.E4_controle = E4_controle = Label(self, text="", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=20)
+        E4cont_window = canvas.create_window(543, self.linha_controle, anchor=NW, window=E4_controle)
+        self.E5_controle = E5_controle = Label(self, text="", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=20)
+        E5cont_window = canvas.create_window(707, self.linha_controle, anchor=NW, window=E5_controle)
+
+        self.lclock = lclock = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_maior, width=10)
+        clock_window = canvas.create_window(992, 54, anchor=NW, window=lclock)
+        self.lpc = lpc = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_maior, width=10)
+        pc_windowoncluidas = canvas.create_window(887, 88, anchor=NW, window=lpc)
+        self.lconcluidas = lconcluidas = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_maior, width=10)
+        concluidas_window = canvas.create_window(1052, 122, anchor=NW, window=lconcluidas)
+        self.lpipeliNW = lpipeliNW = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_maior, width=10)
+        pipeliNW_window = canvas.create_window(1089, 156, anchor=NW, window=lpipeliNW)
+
+        self.lend1 = lend1 = Label(self, text="24", bg=self.lblbgcolor, anchor=CENTER, font=self.fonte_maior, width=10)
+        end1_window = canvas.create_window(self.coluna_end, 264, anchor=NW, window=lend1)
+        self.lval1 = lval1 = Label(self, text="?", bg=self.lblbgcolor, anchor=CENTER, font=self.fonte_maior, width=10)
+        val1_window = canvas.create_window(self.coluna_valor, 264, anchor=NW, window=lval1)
+        self.lend2 = lend2 = Label(self, text="28", bg=self.lblbgcolor, anchor=CENTER, font=self.fonte_maior, width=10)
+        end2_window = canvas.create_window(self.coluna_end, 299, anchor=NW, window=lend2)
+        self.lval2 = lval2 = Label(self, text="?", bg=self.lblbgcolor, anchor=CENTER, font=self.fonte_maior, width=10)
+        val2_window = canvas.create_window(self.coluna_valor, 299, anchor=NW, window=lval2)
+        self.lend3 = lend3 = Label(self, text="28", bg=self.lblbgcolor, anchor=CENTER, font=self.fonte_maior, width=10)
+        end3_window = canvas.create_window(self.coluna_end, 334, anchor=NW, window=lend3)
+        self.lval3 = lval3 = Label(self, text="?", bg=self.lblbgcolor, anchor=CENTER, font=self.fonte_maior, width=10)
+        val3_window = canvas.create_window(self.coluna_valor, 334, anchor=NW, window=lval3)
+        self.lend4 = lend4 = Label(self, text="28", bg=self.lblbgcolor, anchor=CENTER, font=self.fonte_maior, width=10)
+        end4_window = canvas.create_window(self.coluna_end, 369, anchor=NW, window=lend4)
+        self.lval4 = lval4 = Label(self, text="?", bg=self.lblbgcolor, anchor=CENTER, font=self.fonte_maior, width=10)
+        val4_window = canvas.create_window(self.coluna_valor, 369, anchor=NW, window=lval4)
+
+        self.lr0 = lr0 = Label(self, text="0", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r0_window = canvas.create_window(self.colr0, self.linr0, anchor=NW, window=lr0)
+        self.lr1 = lr1 = Label(self, text="0", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r1_window = canvas.create_window(self.colr0 , self.linr0 + self.reglindist, anchor=NW, window=lr1)
+        self.lr2 = lr2 = Label(self, text="0", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r2_window = canvas.create_window(self.colr0, self.linr0 + 2*self.reglindist, anchor=NW, window=lr2)
+        self.lr3 = lr3 = Label(self, text="0", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r3_window = canvas.create_window(self.colr0, self.linr0 + 3*self.reglindist, anchor=NW, window=lr3)
+        self.lr4 = lr4 = Label(self, text="0", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r4_window = canvas.create_window(self.colr0, self.linr0 + 4*self.reglindist, anchor=NW, window=lr4)
+        self.lr5 = lr5 = Label(self, text="0", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r5_window = canvas.create_window(self.colr0, self.linr0 + 5*self.reglindist, anchor=NW, window=lr5)
+        self.lr6 = lr6 = Label(self, text="0", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r6_window = canvas.create_window(self.colr0, self.linr0 + 6*self.reglindist, anchor=NW, window=lr6)
+        self.lr7 = lr7 = Label(self, text="0", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r7_window = canvas.create_window(self.colr0, self.linr0 + 7*self.reglindist, anchor=NW, window=lr7)
+
+        self.lr8 = lr8 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r8_window = canvas.create_window(self.colr0 + self.regcoldist, self.linr0, anchor=NW, window=lr8)
+        self.lr9 = lr9 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r9_window = canvas.create_window(self.colr0 + self.regcoldist , self.linr0 + self.reglindist, anchor=NW, window=lr9)
+        self.lr10 = lr10 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r10_window = canvas.create_window(self.colr0 + self.regcoldist, self.linr0 + 2*self.reglindist, anchor=NW, window=lr10)
+        self.lr11 = lr11 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r11_window = canvas.create_window(self.colr0 + self.regcoldist, self.linr0 + 3*self.reglindist, anchor=NW, window=lr11)
+        self.lr12 = lr12 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r12_window = canvas.create_window(self.colr0 + self.regcoldist, self.linr0 + 4*self.reglindist, anchor=NW, window=lr12)
+        self.lr13 = lr13 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r13_window = canvas.create_window(self.colr0 + self.regcoldist, self.linr0 + 5*self.reglindist, anchor=NW, window=lr13)
+        self.lr14 = lr14 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r14_window = canvas.create_window(self.colr0 + self.regcoldist, self.linr0 + 6*self.reglindist, anchor=NW, window=lr14)
+        self.lr15 = lr15 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r15_window = canvas.create_window(self.colr0 + self.regcoldist, self.linr0 + 7*self.reglindist, anchor=NW, window=lr15)
+
+        self.lr16 = lr16 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r16_window = canvas.create_window(self.colr0 + 2*self.regcoldist, self.linr0, anchor=NW, window=lr16)
+        self.lr17 = lr17 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r17_window = canvas.create_window(self.colr0 + 2*self.regcoldist , self.linr0 + self.reglindist, anchor=NW, window=lr17)
+        self.lr18 = lr18 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r18_window = canvas.create_window(self.colr0 + 2*self.regcoldist, self.linr0 + 2*self.reglindist, anchor=NW, window=lr18)
+        self.lr19 = lr19 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r19_window = canvas.create_window(self.colr0 + 2*self.regcoldist, self.linr0 + 3*self.reglindist, anchor=NW, window=lr19)
+        self.lr20 = lr20 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r20_window = canvas.create_window(self.colr0 + 2*self.regcoldist, self.linr0 + 4*self.reglindist, anchor=NW, window=lr20)
+        self.lr21 = lr21 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r21_window = canvas.create_window(self.colr0 + 2*self.regcoldist, self.linr0 + 5*self.reglindist, anchor=NW, window=lr21)
+        self.lr22 = lr22 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r22_window = canvas.create_window(self.colr0 + 2*self.regcoldist, self.linr0 + 6*self.reglindist, anchor=NW, window=lr22)
+        self.lr23 = lr23 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r23_window = canvas.create_window(self.colr0 + 2*self.regcoldist, self.linr0 + 7*self.reglindist, anchor=NW, window=lr23)
+
+        self.lr24 = lr24 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r24_window = canvas.create_window(self.colr0 + 3*self.regcoldist, self.linr0, anchor=NW, window=lr24)
+        self.lr25 = lr25 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r25_window = canvas.create_window(self.colr0 + 3*self.regcoldist , self.linr0 + self.reglindist, anchor=NW, window=lr25)
+        self.lr26 = lr26 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r26_window = canvas.create_window(self.colr0 + 3*self.regcoldist, self.linr0 + 2*self.reglindist, anchor=NW, window=lr26)
+        self.lr27 = lr27 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r27_window = canvas.create_window(self.colr0 + 3*self.regcoldist, self.linr0 + 3*self.reglindist, anchor=NW, window=lr27)
+        self.lr28 = lr28 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r28_window = canvas.create_window(self.colr0 + 3*self.regcoldist, self.linr0 + 4*self.reglindist, anchor=NW, window=lr28)
+        self.lr29 = lr29 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r29_window = canvas.create_window(self.colr0 + 3*self.regcoldist, self.linr0 + 5*self.reglindist, anchor=NW, window=lr29)
+        self.lr30 = lr30 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r30_window = canvas.create_window(self.colr0 + 3*self.regcoldist, self.linr0 + 6*self.reglindist, anchor=NW, window=lr30)
+        self.lr31 = lr31 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=2)
+        r31_window = canvas.create_window(self.colr0 + 3*self.regcoldist, self.linr0 + 7*self.reglindist, anchor=NW, window=lr31)
+
+        # Botoes e Imagens
     def createWidgets(self):
-        canvas = Canvas(self, bg="white", width=1200, height=720)
+        self.canvas = canvas = Canvas(self, bg="white", width=1200, height=720)
         canvas.pack()
         canvas.create_image(600, 360, image=fundo)
         # QUIT = Button(self, text="QUIT", command=self.quit, fg="red", anchor= W)
@@ -45,130 +176,14 @@ class Application(Frame):
         bstop = Button(self, text="Stop", command=self.stop, width=25*self.razao,
             height=25*self.razao, image=bstop_img, bg="white")
         bstop_window = canvas.create_window(408, self.linha_botoes, anchor=NW, window=bstop)
-        bnext = Button(self, text="Next", command=self.next, width=25*self.razao,
+        bnext = Button(self, text="next", command=self.next, width=25*self.razao,
             height=25*self.razao, image=bnext_img, bg="white")
         bnext_window = canvas.create_window(459, self.linha_botoes, anchor=NW, window=bnext)
         bopen = Button(self, text="Open", command=self.open, width=35*self.razao,
             height=25*self.razao, image=bopen_img, bg="white")
         bopen_window = canvas.create_window(510, self.linha_botoes, anchor=NW, window=bopen)
-        
 
-        E1_instrucao = Label(self, text="l1:addi R10, R0, 100", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        E1inst_window = canvas.create_window(51, self.linha_instrucoes, anchor=NW, window=E1_instrucao)
-
-        E2_instrucao = Label(self, text="l2:sw R0, 24(R0)", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        E2inst_window = canvas.create_window(215, self.linha_instrucoes, anchor=NW, window=E2_instrucao)
-        E3_instrucao = Label(self, text="l3:sw R0, 28(R0)", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        E3inst_window = canvas.create_window(379, self.linha_instrucoes, anchor=NW, window=E3_instrucao)
-        E4_instrucao = Label(self, text="l4:lw R6,28(R0)", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        E4inst_window = canvas.create_window(543, self.linha_instrucoes, anchor=NW, window=E4_instrucao)
-        E5_instrucao = Label(self, text="l5:mul R7,R6,R6", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        E5inst_window = canvas.create_window(707, self.linha_instrucoes, anchor=NW, window=E5_instrucao)
-
-        E1_controle = Label(self, text="", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        E1cont_window = canvas.create_window(51, self.linha_controle, anchor=NW, window=E1_controle)
-        E2_controle = Label(self, text="", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        E2cont_window = canvas.create_window(215, self.linha_controle, anchor=NW, window=E2_controle)
-        E3_controle = Label(self, text="", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        E3cont_window = canvas.create_window(379, self.linha_controle, anchor=NW, window=E3_controle)
-        E4_controle = Label(self, text="", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        E4cont_window = canvas.create_window(543, self.linha_controle, anchor=NW, window=E4_controle)
-        E5_controle = Label(self, text="", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        E5cont_window = canvas.create_window(707, self.linha_controle, anchor=NW, window=E5_controle)
-
-        lclock = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_maior)
-        clock_window = canvas.create_window(self.coluna_dir, 54, anchor=NW, window=lclock)
-        lpc = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_maior)
-        pc_windowoncluidas = canvas.create_window(self.coluna_dir, 88, anchor=NW, window=lpc)
-        lconcluidas = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_maior)
-        concluidas_window = canvas.create_window(self.coluna_dir, 122, anchor=NW, window=lconcluidas)
-        lpipeline = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_maior)
-        pipeline_window = canvas.create_window(self.coluna_dir, 156, anchor=NW, window=lpipeline)
-
-        lend1 = Label(self, text="24", bg=self.lblbgcolor, anchor=NE, font=self.fonte_maior)
-        end1_window = canvas.create_window(self.coluna_end, 274, anchor=NW, window=lend1)
-        lval1 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_maior)
-        val1_window = canvas.create_window(self.coluna_valor, 274, anchor=NW, window=lval1)
-        lend2 = Label(self, text="28", bg=self.lblbgcolor, anchor=NE, font=self.fonte_maior)
-        end2_window = canvas.create_window(self.coluna_end, 309, anchor=NW, window=lend2)
-        lval2 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_maior)
-        val2_window = canvas.create_window(self.coluna_valor, 309, anchor=NW, window=lval2)
-        lend3 = Label(self, text="28", bg=self.lblbgcolor, anchor=NE, font=self.fonte_maior)
-        end3_window = canvas.create_window(self.coluna_end, 344, anchor=NW, window=lend3)
-        lval3 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_maior)
-        val3_window = canvas.create_window(self.coluna_valor, 344, anchor=NW, window=lval3)
-        lend4 = Label(self, text="28", bg=self.lblbgcolor, anchor=NE, font=self.fonte_maior)
-        end4_window = canvas.create_window(self.coluna_end, 379, anchor=NW, window=lend4)
-        lval4 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_maior)
-        val4_window = canvas.create_window(self.coluna_valor, 379, anchor=NW, window=lval4)
-
-        lr0 = Label(self, text="0", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r0_window = canvas.create_window(self.colr0, self.linr0, anchor=NW, window=lr0)
-        lr1 = Label(self, text="0", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r1_window = canvas.create_window(self.colr0 , self.linr0 + self.reglindist, anchor=NW, window=lr1)
-        lr2 = Label(self, text="0", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r2_window = canvas.create_window(self.colr0, self.linr0 + 2*self.reglindist, anchor=NW, window=lr2)
-        lr3 = Label(self, text="0", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r3_window = canvas.create_window(self.colr0, self.linr0 + 3*self.reglindist, anchor=NW, window=lr3)
-        lr4 = Label(self, text="0", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r4_window = canvas.create_window(self.colr0, self.linr0 + 4*self.reglindist, anchor=NW, window=lr4)
-        lr5 = Label(self, text="0", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r5_window = canvas.create_window(self.colr0, self.linr0 + 5*self.reglindist, anchor=NW, window=lr5)
-        lr6 = Label(self, text="0", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r6_window = canvas.create_window(self.colr0, self.linr0 + 6*self.reglindist, anchor=NW, window=lr6)
-        lr7 = Label(self, text="0", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r7_window = canvas.create_window(self.colr0, self.linr0 + 7*self.reglindist, anchor=NW, window=lr7)
-
-        lr8 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r8_window = canvas.create_window(self.colr0 + self.regcoldist, self.linr0, anchor=NW, window=lr8)
-        lr9 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r9_window = canvas.create_window(self.colr0 + self.regcoldist , self.linr0 + self.reglindist, anchor=NW, window=lr9)
-        lr10 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r10_window = canvas.create_window(self.colr0 + self.regcoldist, self.linr0 + 2*self.reglindist, anchor=NW, window=lr10)
-        lr11 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r11_window = canvas.create_window(self.colr0 + self.regcoldist, self.linr0 + 3*self.reglindist, anchor=NW, window=lr11)
-        lr12 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r12_window = canvas.create_window(self.colr0 + self.regcoldist, self.linr0 + 4*self.reglindist, anchor=NW, window=lr12)
-        lr13 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r13_window = canvas.create_window(self.colr0 + self.regcoldist, self.linr0 + 5*self.reglindist, anchor=NW, window=lr13)
-        lr14 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r14_window = canvas.create_window(self.colr0 + self.regcoldist, self.linr0 + 6*self.reglindist, anchor=NW, window=lr14)
-        lr15 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r15_window = canvas.create_window(self.colr0 + self.regcoldist, self.linr0 + 7*self.reglindist, anchor=NW, window=lr15)
-
-        lr16 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r16_window = canvas.create_window(self.colr0 + 2*self.regcoldist, self.linr0, anchor=NW, window=lr16)
-        lr17 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r17_window = canvas.create_window(self.colr0 + 2*self.regcoldist , self.linr0 + self.reglindist, anchor=NW, window=lr17)
-        lr18 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r18_window = canvas.create_window(self.colr0 + 2*self.regcoldist, self.linr0 + 2*self.reglindist, anchor=NW, window=lr18)
-        lr19 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r19_window = canvas.create_window(self.colr0 + 2*self.regcoldist, self.linr0 + 3*self.reglindist, anchor=NW, window=lr19)
-        lr20 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r20_window = canvas.create_window(self.colr0 + 2*self.regcoldist, self.linr0 + 4*self.reglindist, anchor=NW, window=lr20)
-        lr21 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r21_window = canvas.create_window(self.colr0 + 2*self.regcoldist, self.linr0 + 5*self.reglindist, anchor=NW, window=lr21)
-        lr22 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r22_window = canvas.create_window(self.colr0 + 2*self.regcoldist, self.linr0 + 6*self.reglindist, anchor=NW, window=lr22)
-        lr23 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r23_window = canvas.create_window(self.colr0 + 2*self.regcoldist, self.linr0 + 7*self.reglindist, anchor=NW, window=lr23)
-
-        lr24 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r24_window = canvas.create_window(self.colr0 + 3*self.regcoldist, self.linr0, anchor=NW, window=lr24)
-        lr25 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r25_window = canvas.create_window(self.colr0 + 3*self.regcoldist , self.linr0 + self.reglindist, anchor=NW, window=lr25)
-        lr26 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r26_window = canvas.create_window(self.colr0 + 3*self.regcoldist, self.linr0 + 2*self.reglindist, anchor=NW, window=lr26)
-        lr27 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r27_window = canvas.create_window(self.colr0 + 3*self.regcoldist, self.linr0 + 3*self.reglindist, anchor=NW, window=lr27)
-        lr28 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r28_window = canvas.create_window(self.colr0 + 3*self.regcoldist, self.linr0 + 4*self.reglindist, anchor=NW, window=lr28)
-        lr29 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r29_window = canvas.create_window(self.colr0 + 3*self.regcoldist, self.linr0 + 5*self.reglindist, anchor=NW, window=lr29)
-        lr30 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r30_window = canvas.create_window(self.colr0 + 3*self.regcoldist, self.linr0 + 6*self.reglindist, anchor=NW, window=lr30)
-        lr31 = Label(self, text="?", bg=self.lblbgcolor, anchor=NE, font=self.fonte_textos)
-        r31_window = canvas.create_window(self.colr0 + 3*self.regcoldist, self.linr0 + 7*self.reglindist, anchor=NW, window=lr31)
+        self.labels_iniciais()
 
     def __init__(self, master=None):
         Frame.__init__(self, master)
@@ -189,4 +204,3 @@ bopen_img = ImageTk.PhotoImage(file="images/open.png")
 #Lanca o nosso app, seu loop principal e finaliza o programa
 app = Application(master=root)
 app.mainloop()
-root.destroy()
