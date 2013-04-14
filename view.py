@@ -3,19 +3,24 @@ import ImageTk, time
 import tkFileDialog
 import tkFont
 from threading import Thread
+from filereader import FileReader
 
 class geradorDeClock(Thread):
-    def pausar(self):
-        self.contando = False
-    def continuar(self):
-        self.contando = True
-    def terminar(self):
-        self.terminado = True
     def __init__(self, metodo):
         Thread.__init__(self)
         self.metodo = metodo
         self.contando = True
         self.terminado = False
+
+    def pausar(self):
+        self.contando = False
+
+    def continuar(self):
+        self.contando = True
+
+    def terminar(self):
+        self.terminado = True
+
     def run(self):
         while not self.terminado:
             if self.contando:
@@ -24,6 +29,11 @@ class geradorDeClock(Thread):
 
 class Application(Frame):
     razao = 1.5
+
+    # file reader
+    fileReader = FileReader()
+
+    # grid
     linha_botoes = 30
     linha_instrucoes = 225
     linha_controle = 265
@@ -35,12 +45,16 @@ class Application(Frame):
     colr0 = 890
     reglindist = 28.5
     regcoldist = 84.3
+
+    # pendulo?
     pendulo = None
 
+    # fonts
     fonte_negrito = "Arial 12 bold"
     fonte_textos = "Arial 12"
     fonte_maior = "Arial 14"
 
+    # button actions
     def quit(self):
         if pendulo != None:
             self.pendulo.terminar()
@@ -60,6 +74,7 @@ class Application(Frame):
         if self.pendulo != None:
             if self.pendulo.contando:
                 self.pendulo.pausar()
+
     def stop(self):
         print "Stop!"
         if self.pendulo != None:
@@ -67,6 +82,7 @@ class Application(Frame):
                 self.pendulo.terminar()
                 self.pendulo = None
         self.labels_iniciais()
+
     def next(self):
         print "next!"
         if self.lclock["text"] == "?":
@@ -90,6 +106,8 @@ class Application(Frame):
 
         self.FileName["text"] = file_path
 
+        self.fileReader.read(file_path)
+
         if self.lclock["text"] == "?":
             self.lclock["text"] = "0"
         if self.lclock["text"] == "0":
@@ -111,7 +129,7 @@ class Application(Frame):
         
         self.FileNameLabel = FileNameLabel = Label(self, text="Choosen file:", bg=self.lblbgcolor, anchor=NW, font=self.fonte_negrito, width=40)
         FileNameLabel_window = canvas.create_window(340, 30, anchor=NW, window=FileNameLabel)
-        self.FileName = FileName = Label(self, text="blablabla.txt", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=80)
+        self.FileName = FileName = Label(self, text="No file chosen yet.", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=80)
         FileName_window = canvas.create_window(340, 50, anchor=NW, window=FileName)
 
         self.E1_controle = E1_controle = Label(self, text="", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=20)
