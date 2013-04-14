@@ -1,0 +1,41 @@
+Intrução em IF
+l1:addi R10, R0, 100
+Sinais de Controle
+
+Intrução em DI/RF
+l2:sw R0, 24(R0)
+Sinais de Controle
+
+Intrução em EX
+l3:sw R0, 28(R0)
+Sinais de Controle
+
+Intrução em MEM
+l4:lw R6,28(R0)
+Sinais de Controle
+
+Intrução em WB
+l5:mul R7,R6,R6
+Sinais de Controle
+
+Memória recente usada
+Endereço	Valor
+24	?
+28	?
+32	?
+36	?
+
+Clock Corrente:	?
+Pc:	?
+Número de Instruções concluídas:	?
+Produtividade do pipeline:	?
+
+Registradores
+R0	0	R8	?	R16	?	R24	?
+R1	0	R9	?	R17	?	R25	?
+R2	0	R10	?	R16	?	R26	?
+R3	0	R11	?	R19	?	R27	?
+R4	0	R12	?	R20	?	R28	?
+R5	0	R13	?	R21	?	R29	?
+R6	0	R14	?	R22	?	R30	?
+R7	0	R15	?	R23	?	R31	?
