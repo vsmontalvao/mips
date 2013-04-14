@@ -1,5 +1,4 @@
 mips - Simulador de Pipeline MIPS
-Autores: Abraão Lacerda, Igor Barroso, Victor Montalvão
 ====
 
 MIPS simulator
