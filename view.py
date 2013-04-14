@@ -1,9 +1,28 @@
 from Tkinter import *
-import ImageTk
+import ImageTk, time
+from threading import Thread
+
+class geradorDeClock(Thread):
+    def pausar(self):
+        self.contando = False
+    def continuar(self):
+        self.contando = True
+    def terminar(self):
+        self.terminado = True
+    def __init__(self, metodo):
+        Thread.__init__(self)
+        self.metodo = metodo
+        self.contando = True
+        self.terminado = False
+    def run(self):
+        while not self.terminado:
+            if self.contando:
+                self.metodo()
+            time.sleep(1)
 
 class Application(Frame):
     razao = 1.5
-    linha_botoes = 28
+    linha_botoes = 30
     linha_instrucoes = 225
     linha_controle = 265
     coluna_dir=1150
@@ -16,21 +35,34 @@ class Application(Frame):
     colr0 = 890
     reglindist = 28.5
     regcoldist = 84.3
+    pendulo = None
 
     def quit(self):
+        if pendulo != None:
+            self.pendulo.terminar()
         self.quit
+
     def play(self):
         print "Play!"
-        if self.lclock["text"] == "?":
-            self.lclock["text"] = "0"
-        if self.lclock["text"] == "0":
-            self.lclock["text"] = "?"
+        if self.pendulo == None:
+            self.pendulo = geradorDeClock(self.next)
+            self.pendulo.start()
+        else:
+            if not self.pendulo.contando:
+                self.pendulo.continuar()
+        
     def pause(self):
         print "Pause!"
+        if self.pendulo != None:
+            if self.pendulo.contando:
+                self.pendulo.pausar()
     def stop(self):
         print "Stop!"
+        if self.pendulo != None:
+            if not self.pendulo.terminado:
+                self.pendulo.terminar()
+                self.pendulo = None
         self.labels_iniciais()
-        self.canvas.update()
     def next(self):
         print "next!"
         if self.lclock["text"] == "?":
@@ -40,6 +72,10 @@ class Application(Frame):
 
     def open(self):
         print "Open!"
+        if self.lclock["text"] == "?":
+            self.lclock["text"] = "0"
+        if self.lclock["text"] == "0":
+            self.lclock["text"] = "?"
 
     def labels_iniciais(self):
         canvas = self.canvas
@@ -165,22 +201,21 @@ class Application(Frame):
         self.canvas = canvas = Canvas(self, bg="white", width=1200, height=720)
         canvas.pack()
         canvas.create_image(600, 360, image=fundo)
-        # QUIT = Button(self, text="QUIT", command=self.quit, fg="red", anchor= W)
-        # QUIT.pack({"side": "left"})
+
         bplay = Button(self, text="Play", command=self.play, fg="darkgreen",
-            width=25*self.razao, height=25*self.razao, image=bstart_img, bg="white")
+            width=25*self.razao, height=25*self.razao, image=bstart_img, bg="white", bd=0, activebackground="white")
         bplay_window = canvas.create_window(306, self.linha_botoes, anchor=NW, window=bplay)
         bpause = Button(self, text="Pause", command=self.pause, width=25*self.razao,
-            height=25*self.razao, image=bpause_img, bg="white")
+            height=25*self.razao, image=bpause_img, bg="white", bd=0, activebackground="white")
         bpause_window = canvas.create_window(357, self.linha_botoes, anchor=NW, window=bpause)
         bstop = Button(self, text="Stop", command=self.stop, width=25*self.razao,
-            height=25*self.razao, image=bstop_img, bg="white")
+            height=25*self.razao, image=bstop_img, bg="white", bd=0, activebackground="white")
         bstop_window = canvas.create_window(408, self.linha_botoes, anchor=NW, window=bstop)
         bnext = Button(self, text="next", command=self.next, width=25*self.razao,
-            height=25*self.razao, image=bnext_img, bg="white")
+            height=25*self.razao, image=bnext_img, bg="white", bd=0, activebackground="white")
         bnext_window = canvas.create_window(459, self.linha_botoes, anchor=NW, window=bnext)
         bopen = Button(self, text="Open", command=self.open, width=35*self.razao,
-            height=25*self.razao, image=bopen_img, bg="white")
+            height=25*self.razao, image=bopen_img, bg="white", bd=0, activebackground="white")
         bopen_window = canvas.create_window(510, self.linha_botoes, anchor=NW, window=bopen)
 
         self.labels_iniciais()
