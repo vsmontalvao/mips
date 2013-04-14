@@ -1,19 +1,26 @@
 from Tkinter import *
 import ImageTk, time
+import tkFileDialog
+import tkFont
 from threading import Thread
+from filereader import FileReader
 
 class geradorDeClock(Thread):
-    def pausar(self):
-        self.contando = False
-    def continuar(self):
-        self.contando = True
-    def terminar(self):
-        self.terminado = True
     def __init__(self, metodo):
         Thread.__init__(self)
         self.metodo = metodo
         self.contando = True
         self.terminado = False
+
+    def pausar(self):
+        self.contando = False
+
+    def continuar(self):
+        self.contando = True
+
+    def terminar(self):
+        self.terminado = True
+
     def run(self):
         try:
             while not self.terminado:
@@ -24,21 +31,32 @@ class geradorDeClock(Thread):
             None
 class Application(Frame):
     razao = 1.5
+
+    # file reader
+    fileReader = FileReader()
+
+    # grid
     linha_botoes = 30
     linha_instrucoes = 225
     linha_controle = 265
     coluna_dir=1150
     coluna_end=889
     coluna_valor=1028
-    fonte_textos = "Arial 7"
-    fonte_maior = "Arial 10"
     lblbgcolor = "white"
-    linr0 = 465
+    linr0 = 464
     colr0 = 890
     reglindist = 28.5
     regcoldist = 84.3
+
+    # pendulo?
     pendulo = None
 
+    # fonts
+    fonte_negrito = "Arial 8 bold"
+    fonte_textos = "Arial 8"
+    fonte_maior = "Arial 14"
+
+    # button actions
     def quit(self):
         if pendulo != None:
             self.pendulo.terminar()
@@ -58,6 +76,7 @@ class Application(Frame):
         if self.pendulo != None:
             if self.pendulo.contando:
                 self.pendulo.pausar()
+
     def stop(self):
         print "Stop!"
         if self.pendulo != None:
@@ -65,6 +84,7 @@ class Application(Frame):
                 self.pendulo.terminar()
                 self.pendulo = None
         self.labels_iniciais()
+
     def next(self):
         print "next!"
         if self.lclock["text"] == "?":
@@ -74,44 +94,58 @@ class Application(Frame):
 
     def open(self):
         print "Open!"
-        if self.lclock["text"] == "?":
-            self.lclock["text"] = "0"
-        if self.lclock["text"] == "0":
-            self.lclock["text"] = "?"
+
+        # file choosing
+        master = Tk()
+        master.withdraw() # hiding tkinter window
+
+        file_path = tkFileDialog.askopenfilename(title="Open file", filetypes=[("txt file",".txt")])
+
+        if file_path != "":
+            print "You chose file with path:", file_path
+        else:
+            print "You should have chosen a file."
+        self.FileName["text"] = file_path
+        self.fileReader.read(file_path)
 
     def labels_iniciais(self):
         canvas = self.canvas
-        self.lclock = E1_instrucao = Label(self, text="l1:addi R10, R0, 100", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=20)
+        
+        self.lclock = E1_instrucao = Label(self, text="l1:addi R10, R0, 100", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
         E1inst_window = canvas.create_window(51, self.linha_instrucoes, anchor=NW, window=E1_instrucao)
-
-        self.E2_instrucao = E2_instrucao = Label(self, text="l2:sw R0, 24(R0)", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=20)
+        self.E2_instrucao = E2_instrucao = Label(self, text="l2:sw R0, 24(R0)", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
         E2inst_window = canvas.create_window(215, self.linha_instrucoes, anchor=NW, window=E2_instrucao)
-        self.E2_instrucao = E3_instrucao = Label(self, text="l3:sw R0, 28(R0)", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=20)
+        self.E2_instrucao = E3_instrucao = Label(self, text="l3:sw R0, 28(R0)", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
         E3inst_window = canvas.create_window(379, self.linha_instrucoes, anchor=NW, window=E3_instrucao)
-        self.E2_instrucao = E4_instrucao = Label(self, text="l4:lw R6,28(R0)", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=20)
+        self.E2_instrucao = E4_instrucao = Label(self, text="l4:lw R6,28(R0)", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
         E4inst_window = canvas.create_window(543, self.linha_instrucoes, anchor=NW, window=E4_instrucao)
-        self.E2_instrucao = E5_instrucao = Label(self, text="l5:mul R7,R6,R6", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=20)
+        self.E2_instrucao = E5_instrucao = Label(self, text="l5:mul R7,R6,R6", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
         E5inst_window = canvas.create_window(707, self.linha_instrucoes, anchor=NW, window=E5_instrucao)
+        
+        self.FileNameLabel = FileNameLabel = Label(self, text="Choosen file:", bg=self.lblbgcolor, anchor=NW, font=self.fonte_negrito, width=40)
+        FileNameLabel_window = canvas.create_window(340, 30, anchor=NW, window=FileNameLabel)
+        self.FileName = FileName = Label(self, text="No file chosen yet.", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=60)
+        FileName_window = canvas.create_window(340, 50, anchor=NW, window=FileName)
 
-        self.E1_controle = E1_controle = Label(self, text="", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=20)
+        self.E1_controle = E1_controle = Label(self, text="", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
         E1cont_window = canvas.create_window(51, self.linha_controle, anchor=NW, window=E1_controle)
-        self.E2_controle = E2_controle = Label(self, text="", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=20)
+        self.E2_controle = E2_controle = Label(self, text="", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
         E2cont_window = canvas.create_window(215, self.linha_controle, anchor=NW, window=E2_controle)
-        self.E3_controle = E3_controle = Label(self, text="", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=20)
+        self.E3_controle = E3_controle = Label(self, text="", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
         E3cont_window = canvas.create_window(379, self.linha_controle, anchor=NW, window=E3_controle)
-        self.E4_controle = E4_controle = Label(self, text="", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=20)
+        self.E4_controle = E4_controle = Label(self, text="", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
         E4cont_window = canvas.create_window(543, self.linha_controle, anchor=NW, window=E4_controle)
-        self.E5_controle = E5_controle = Label(self, text="", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=20)
+        self.E5_controle = E5_controle = Label(self, text="", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
         E5cont_window = canvas.create_window(707, self.linha_controle, anchor=NW, window=E5_controle)
 
         self.lclock = lclock = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_maior, width=10)
-        clock_window = canvas.create_window(992, 54, anchor=NW, window=lclock)
+        clock_window = canvas.create_window(992, 48, anchor=NW, window=lclock)
         self.lpc = lpc = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_maior, width=10)
-        pc_windowoncluidas = canvas.create_window(887, 88, anchor=NW, window=lpc)
+        pc_windowoncluidas = canvas.create_window(887, 82, anchor=NW, window=lpc)
         self.lconcluidas = lconcluidas = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_maior, width=10)
-        concluidas_window = canvas.create_window(1052, 122, anchor=NW, window=lconcluidas)
-        self.lpipeliNW = lpipeliNW = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_maior, width=10)
-        pipeliNW_window = canvas.create_window(1089, 156, anchor=NW, window=lpipeliNW)
+        concluidas_window = canvas.create_window(1052, 116, anchor=NW, window=lconcluidas)
+        self.lpipeliNW = lpipeliNW = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_maior, width=7)
+        pipeliNW_window = canvas.create_window(1089, 150, anchor=NW, window=lpipeliNW)
 
         self.lend1 = lend1 = Label(self, text="24", bg=self.lblbgcolor, anchor=CENTER, font=self.fonte_maior, width=10)
         end1_window = canvas.create_window(self.coluna_end, 264, anchor=NW, window=lend1)
@@ -215,19 +249,19 @@ class Application(Frame):
 
         bplay = Button(self, text="Play", command=self.play, fg="darkgreen",
             width=25*self.razao, height=25*self.razao, image=self.bstart_img, bg="white", bd=0, activebackground="white")
-        bplay_window = canvas.create_window(306, self.linha_botoes, anchor=NW, window=bplay)
+        bplay_window = canvas.create_window(43, self.linha_botoes, anchor=NW, window=bplay)
         bpause = Button(self, text="Pause", command=self.pause, width=25*self.razao,
             height=25*self.razao, image=self.bpause_img, bg="white", bd=0, activebackground="white")
-        bpause_window = canvas.create_window(357, self.linha_botoes, anchor=NW, window=bpause)
+        bpause_window = canvas.create_window(94, self.linha_botoes, anchor=NW, window=bpause)
         bstop = Button(self, text="Stop", command=self.stop, width=25*self.razao,
             height=25*self.razao, image=self.bstop_img, bg="white", bd=0, activebackground="white")
-        bstop_window = canvas.create_window(408, self.linha_botoes, anchor=NW, window=bstop)
+        bstop_window = canvas.create_window(145, self.linha_botoes, anchor=NW, window=bstop)
         bnext = Button(self, text="next", command=self.next, width=25*self.razao,
             height=25*self.razao, image=self.bnext_img, bg="white", bd=0, activebackground="white")
-        bnext_window = canvas.create_window(459, self.linha_botoes, anchor=NW, window=bnext)
+        bnext_window = canvas.create_window(196, self.linha_botoes, anchor=NW, window=bnext)
         bopen = Button(self, text="Open", command=self.open, width=35*self.razao,
             height=25*self.razao, image=self.bopen_img, bg="white", bd=0, activebackground="white")
-        bopen_window = canvas.create_window(510, self.linha_botoes, anchor=NW, window=bopen)
+        bopen_window = canvas.create_window(247, self.linha_botoes, anchor=NW, window=bopen)
 
         self.labels_iniciais()
 
