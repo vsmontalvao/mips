@@ -17,48 +17,35 @@ class Application(Frame):
 
     # Botoes e Imagens
     def createWidgets(self):
-        QUIT = Button(self)
-        QUIT["text"] = "QUIT"
-        QUIT["fg"]   = "red"
-        QUIT["command"] =  self.quit
+        
+
+        QUIT = Button(self, text="QUIT", command=self.quit, fg="red", anchor= W)
         QUIT.pack({"side": "left"})
 
-        bplay = Button(self)
-        bplay["text"] = "Play"
-        bplay["fg"]   = "darkgreen"
-        bplay["command"] = self.play
+        bplay = Button(self, text="Play", command=self.play, fg="darkgreen", anchor= W)
         bplay.config(image=bstart_img)
         bplay.pack({"side": "left"})
 
-        bpause = Button(self)
-        bpause["text"] = "Pause"
-        bpause["command"] = self.pause
+        bpause = Button(self, text="Pause", command=self.pause, anchor= W)
         bpause.config(image=bpause_img)
         bpause.pack({"side": "left"})
 
-        bstop = Button(self)
-        bstop["text"] = "Stop"
-        bstop["command"] = self.stop
+        bstop = Button(self, text="Stop", command=self.stop, anchor= W)
         bstop.config(image=bstop_img)
         bstop.pack({"side": "left"})
 
-        bnext = Button(self)
-        bnext["text"] = "Next"
-        bnext["command"] = self.next
+        bnext = Button(self, text="Next", command=self.next, anchor= W)
         bnext.config(image=bnext_img)
         bnext.pack({"side": "left"})
 
-        bopen = Button(self)
-        bopen["text"] = "Open"
-        bopen["command"] = self.open
+        bopen = Button(self, text="Open", command=self.open, anchor= W)
         bopen.config(image=bopen_img)
         bopen.pack({"side": "left"})
 
-        canvas = Canvas(self, bg="black", width=537, height=321)
+        canvas = Canvas(self, bg="white", width=800, height=600)
         canvas.pack()
         
-        canvas.create_image(537, 321, image=mips_blocks)
-        canvas["bg"]="white"
+        canvas.create_image(290, 420, image=mips_blocks)
 
     def __init__(self, master=None):
         Frame.__init__(self, master)
