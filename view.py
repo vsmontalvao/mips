@@ -15,11 +15,13 @@ class geradorDeClock(Thread):
         self.contando = True
         self.terminado = False
     def run(self):
-        while not self.terminado:
-            if self.contando:
-                self.metodo()
-            time.sleep(1)
-
+        try:
+            while not self.terminado:
+                if self.contando:
+                    self.metodo()
+                time.sleep(1)
+        except:
+            None
 class Application(Frame):
     razao = 1.5
     linha_botoes = 30
@@ -198,24 +200,33 @@ class Application(Frame):
 
         # Botoes e Imagens
     def createWidgets(self):
+        # Carrega Imagens
+        self.fundo = ImageTk.PhotoImage(file="images/design_programa.png")
+        self.bstart_img = ImageTk.PhotoImage(file="images/start.png")
+        self.bstop_img = ImageTk.PhotoImage(file="images/stop.png")
+        self.bpause_img = ImageTk.PhotoImage(file="images/pause.png")
+        self.bnext_img = ImageTk.PhotoImage(file="images/next.png")
+        self.bopen_img = ImageTk.PhotoImage(file="images/open.png")
+        
+
         self.canvas = canvas = Canvas(self, bg="white", width=1200, height=720)
         canvas.pack()
-        canvas.create_image(600, 360, image=fundo)
+        canvas.create_image(600, 360, image=self.fundo)
 
         bplay = Button(self, text="Play", command=self.play, fg="darkgreen",
-            width=25*self.razao, height=25*self.razao, image=bstart_img, bg="white", bd=0, activebackground="white")
+            width=25*self.razao, height=25*self.razao, image=self.bstart_img, bg="white", bd=0, activebackground="white")
         bplay_window = canvas.create_window(306, self.linha_botoes, anchor=NW, window=bplay)
         bpause = Button(self, text="Pause", command=self.pause, width=25*self.razao,
-            height=25*self.razao, image=bpause_img, bg="white", bd=0, activebackground="white")
+            height=25*self.razao, image=self.bpause_img, bg="white", bd=0, activebackground="white")
         bpause_window = canvas.create_window(357, self.linha_botoes, anchor=NW, window=bpause)
         bstop = Button(self, text="Stop", command=self.stop, width=25*self.razao,
-            height=25*self.razao, image=bstop_img, bg="white", bd=0, activebackground="white")
+            height=25*self.razao, image=self.bstop_img, bg="white", bd=0, activebackground="white")
         bstop_window = canvas.create_window(408, self.linha_botoes, anchor=NW, window=bstop)
         bnext = Button(self, text="next", command=self.next, width=25*self.razao,
-            height=25*self.razao, image=bnext_img, bg="white", bd=0, activebackground="white")
+            height=25*self.razao, image=self.bnext_img, bg="white", bd=0, activebackground="white")
         bnext_window = canvas.create_window(459, self.linha_botoes, anchor=NW, window=bnext)
         bopen = Button(self, text="Open", command=self.open, width=35*self.razao,
-            height=25*self.razao, image=bopen_img, bg="white", bd=0, activebackground="white")
+            height=25*self.razao, image=self.bopen_img, bg="white", bd=0, activebackground="white")
         bopen_window = canvas.create_window(510, self.linha_botoes, anchor=NW, window=bopen)
 
         self.labels_iniciais()
@@ -224,18 +235,13 @@ class Application(Frame):
         Frame.__init__(self, master)
         self.pack()
         self.createWidgets()
-print "VIEW"
-# Inicializa o Tkinter
-root = Tk()
-root.title("mips simulator")
-root.geometry("1200x720")
-# Carrega Imagens
-fundo = ImageTk.PhotoImage(file="images/design_programa.png")
-bstart_img = ImageTk.PhotoImage(file="images/start.png")
-bstop_img = ImageTk.PhotoImage(file="images/stop.png")
-bpause_img = ImageTk.PhotoImage(file="images/pause.png")
-bnext_img = ImageTk.PhotoImage(file="images/next.png")
-bopen_img = ImageTk.PhotoImage(file="images/open.png")
-#Lanca o nosso app, seu loop principal e finaliza o programa
-app = Application(master=root)
-app.mainloop()
+def GUI():
+    print "VIEW"
+    # Inicializa o Tkinter
+    root = Tk()
+    root.title("mips simulator")
+    root.geometry("1200x720")
+
+    #Lanca o nosso app, seu loop principal e finaliza o programa
+    app = Application(master=root)
+    app.mainloop()
