@@ -15,17 +15,36 @@ class Mips():
 
 	def instructionDecodeRegisterFetch(instructionCode, i):
 		bits = self.getInst(i)
-		if instructionCode == "000000": 
-			s = bits[6:11]
-			t = bits[11:16]
-			if bits[21:32] == "00000100000"
-				instruction = "add"
-				d = bits(i)[16:21]
-		elif instructionCode == "001000"
-			s = bits[6:11]
-			t = bits[11:16]
-			imm = bits(i)[16:32]
-		elif instructionCode == "000000" 
+		if instructionCode == "000010"
+			self.address = bits[6:32]
+		elif
+			self.s = bits[6:11]
+			self.t = bits[11:16]
+			if instructionCode == "000000": 
+				self.d = bits(i)[16:21]
+				self.shamt = bits(i)[21:26]
+				if bits[26:32] == "100000"
+					self.instruction = "Add"
+				elif bits[26:32] == "011000"
+					self.instruction = "Mul"
+				elif bits[26:32] == "000000"
+					self.instruction = "Nop"
+				elif bits[26:32] == "100010"
+					self.instruction = "Sub"
+			else
+				self.immediate = bits[16:32]
+				if instructionCode == "001000"
+					self.instruction = "Addi"
+				elif instructionCode == "000101"
+					self.instruction = "Beq"
+				elif instructionCode == "000111"
+					self.instruction = "Ble"	
+				elif instructionCode == "000100"
+					self.instruction = "Bne"
+				elif instructionCode == "100011"
+					self.instruction = "Lw"
+				elif instructionCode == "101011"
+					self.instruction = "Sw"
 		
 	def instructionExecute():
 		pass
