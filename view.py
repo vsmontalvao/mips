@@ -90,6 +90,8 @@ class Application(Frame):
             self.lclock["text"] = "0"
         else:
             self.lclock["text"] = int(self.lclock["text"]) + 1
+        if self.mips != None:
+            self.mips.proxEstagio()
 
     def open(self):
         print "Open!"
