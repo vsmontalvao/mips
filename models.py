@@ -7,8 +7,8 @@ fr = FileReader()
 fr.read("./instructions/program.txt")
 print "Arquivo program.txt carregado"
 
-def fetch(i, filereader):
-	instruction = filereader.getInst(i)
+def InstructionFetch(i, filereader):
+	instruction = filereader.getInst(i)[0:5]
 	return instruction
 
 
