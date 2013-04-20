@@ -140,8 +140,8 @@ class Application(Frame):
         pc_windowoncluidas = canvas.create_window(887, 82, anchor=NW, window=lpc)
         self.lconcluidas = lconcluidas = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_maior, width=10)
         concluidas_window = canvas.create_window(1052, 116, anchor=NW, window=lconcluidas)
-        self.lpipeliNW = lpipeliNW = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_maior, width=7)
-        pipeliNW_window = canvas.create_window(1089, 150, anchor=NW, window=lpipeliNW)
+        self.lprodutividade = lprodutividade = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_maior, width=7)
+        pipeliNW_window = canvas.create_window(1089, 150, anchor=NW, window=lprodutividade)
 
         self.lend1 = lend1 = Label(self, text="24", bg=self.lblbgcolor, anchor=CENTER, font=self.fonte_maior, width=10)
         end1_window = canvas.create_window(self.coluna_end, 264, anchor=NW, window=lend1)
