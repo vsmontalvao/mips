@@ -9,14 +9,17 @@ class Mips():
 	def getInst(self, i):
 		instruction = self.fr.getInst(i)[0:32]
 		return instruction
-# instrucao_estagio1="addi R10, R0, 100"
+	def instructionFetch(i):
+		pass
 
-# fr = FileReader()
-# fr.read("./instructions/program.txt")
-# print "Arquivo program.txt carregado"
+	def instructionDecodeRegisterFetch():
+		pass
 
+	def instructionExecute():
+		pass
 
+	def memoryAccess():
+		pass
 
-
-
-
+	def writeBack():
+		pass
