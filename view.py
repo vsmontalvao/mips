@@ -31,7 +31,6 @@ class geradorDeClock(Thread):
             None
 class Application(Frame):
     razao = 1.5
-
     # grid
     linha_botoes = 30
     linha_instrucoes = 225
@@ -55,7 +54,6 @@ class Application(Frame):
 
     def setMips(self, mips):
         self.mips = mips
-        mips.setView(self)
     # button actions
     def quit(self):
         if pendulo != None:
@@ -87,10 +85,6 @@ class Application(Frame):
 
     def next(self):
         print "next!"
-        # if self.lclock["text"] == "?":
-        #     self.lclock["text"] = "0"
-        # else:
-        #     self.lclock["text"] = int(self.lclock["text"]) + 1
         if self.mips != None:
             self.mips.proxEstagio()
 
@@ -113,15 +107,15 @@ class Application(Frame):
     def labels_iniciais(self):
         canvas = self.canvas
         
-        self.lclock = E1_instrucao = Label(self, text="l1:addi R10, R0, 100", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
+        self.E1_instrucao = E1_instrucao = Label(self, text="l1:addi R10, R0, 100", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
         E1inst_window = canvas.create_window(51, self.linha_instrucoes, anchor=NW, window=E1_instrucao)
         self.E2_instrucao = E2_instrucao = Label(self, text="l2:sw R0, 24(R0)", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
         E2inst_window = canvas.create_window(215, self.linha_instrucoes, anchor=NW, window=E2_instrucao)
-        self.E2_instrucao = E3_instrucao = Label(self, text="l3:sw R0, 28(R0)", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
+        self.E3_instrucao = E3_instrucao = Label(self, text="l3:sw R0, 28(R0)", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
         E3inst_window = canvas.create_window(379, self.linha_instrucoes, anchor=NW, window=E3_instrucao)
-        self.E2_instrucao = E4_instrucao = Label(self, text="l4:lw R6,28(R0)", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
+        self.E4_instrucao = E4_instrucao = Label(self, text="l4:lw R6,28(R0)", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
         E4inst_window = canvas.create_window(543, self.linha_instrucoes, anchor=NW, window=E4_instrucao)
-        self.E2_instrucao = E5_instrucao = Label(self, text="l5:mul R7,R6,R6", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
+        self.E5_instrucao = E5_instrucao = Label(self, text="l5:mul R7,R6,R6", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
         E5inst_window = canvas.create_window(707, self.linha_instrucoes, anchor=NW, window=E5_instrucao)
         
         self.FileNameLabel = FileNameLabel = Label(self, text="Choosen file:", bg=self.lblbgcolor, anchor=NW, font=self.fonte_negrito, width=40)
@@ -280,5 +274,6 @@ def GUI(mips):
 
     #Lanca o nosso app, seu loop principal e finaliza o programa
     app = Application(master=root)
+    mips.setView(app)
     app.setMips(mips)
     app.mainloop()
