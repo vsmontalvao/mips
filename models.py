@@ -1,15 +1,22 @@
 print "MODELS"
 from filereader import FileReader
 
-instrucao_estagio1="addi R10, R0, 100"
+class Mips():
+	fr = FileReader()
+	def read(self, filePath):
+		self.fr.read(filePath)
+		self.getInst(2)
+	def getInst(self, i):
+		instruction = self.fr.getInst(i)[0:32]
+		return instruction
+# instrucao_estagio1="addi R10, R0, 100"
 
-fr = FileReader()
-fr.read("./instructions/program.txt")
-print "Arquivo program.txt carregado"
+# fr = FileReader()
+# fr.read("./instructions/program.txt")
+# print "Arquivo program.txt carregado"
 
-def InstructionFetch(i, filereader):
-	instruction = filereader.getInst(i)[0:5]
-	return instruction
+
+
 
 
 

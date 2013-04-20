@@ -32,9 +32,6 @@ class geradorDeClock(Thread):
 class Application(Frame):
     razao = 1.5
 
-    # file reader
-    fileReader = FileReader()
-
     # grid
     linha_botoes = 30
     linha_instrucoes = 225
@@ -56,6 +53,8 @@ class Application(Frame):
     fonte_textos = "Arial 8"
     fonte_maior = "Arial 14"
 
+    def setMips(self, mips):
+        self.mips = mips
     # button actions
     def quit(self):
         if pendulo != None:
@@ -106,7 +105,7 @@ class Application(Frame):
         else:
             print "You should have chosen a file."
         self.FileName["text"] = file_path
-        self.fileReader.read(file_path)
+        self.mips.read(file_path)
 
     def labels_iniciais(self):
         canvas = self.canvas
@@ -269,7 +268,7 @@ class Application(Frame):
         Frame.__init__(self, master)
         self.pack()
         self.createWidgets()
-def GUI():
+def GUI(mips):
     print "VIEW"
     # Inicializa o Tkinter
     root = Tk()
@@ -278,4 +277,5 @@ def GUI():
 
     #Lanca o nosso app, seu loop principal e finaliza o programa
     app = Application(master=root)
+    app.setMips(mips)
     app.mainloop()

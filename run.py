@@ -3,4 +3,5 @@ import models
 import inputs
 import view
 
-view.GUI()
+mips = models.Mips()
+view.GUI(mips)
