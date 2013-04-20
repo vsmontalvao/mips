@@ -55,6 +55,7 @@ class Application(Frame):
 
     def setMips(self, mips):
         self.mips = mips
+        mips.setView(self)
     # button actions
     def quit(self):
         if pendulo != None:
@@ -86,10 +87,10 @@ class Application(Frame):
 
     def next(self):
         print "next!"
-        if self.lclock["text"] == "?":
-            self.lclock["text"] = "0"
-        else:
-            self.lclock["text"] = int(self.lclock["text"]) + 1
+        # if self.lclock["text"] == "?":
+        #     self.lclock["text"] = "0"
+        # else:
+        #     self.lclock["text"] = int(self.lclock["text"]) + 1
         if self.mips != None:
             self.mips.proxEstagio()
 
