@@ -9,59 +9,63 @@ class Estagio:
         self.SinControle = ""
 
 
-class Mips():
-    fr = FileReader()
-    clock = -1
-    pc = -1
-    concluidas = 0
-    produtividade = 0
-    E1 = Estagio(1)
-    E2 = Estagio(2)
-    E3 = Estagio(3)
-    E4 = Estagio(4)
-    E5 = Estagio(5)
+class Mips:
+    def __init__(self):
+        self.fr = FileReader()
+        self.inicio()
 
-    end1 = None
-    val1 = None
-    end2 = None
-    val2 = None
-    end3 = None
-    val3 = None
-    end4 = None
-    val4 = None
+    def inicio(self):
+        self.clock = -1
+        self.pc = -1
+        self.concluidas = 0
+        self.produtividade = 0
+        self.E1 = Estagio(1)
+        self.E2 = Estagio(2)
+        self.E3 = Estagio(3)
+        self.E4 = Estagio(4)
+        self.E5 = Estagio(5)
 
-    r0 = 0
-    r1 = 0
-    r2 = 0
-    r3 = 0
-    r4 = 0
-    r5 = 0
-    r6 = 0
-    r7 = 0
-    r8 = 0
-    r9 = 0
-    r10 = 0
-    r11 = 0
-    r12 = 0
-    r13 = 0
-    r14 = 0
-    r15 = 0
-    r16 = 0
-    r17 = 0
-    r18 = 0
-    r19 = 0
-    r20 = 0
-    r21 = 0
-    r22 = 0
-    r23 = 0
-    r24 = 0
-    r25 = 0
-    r26 = 0
-    r27 = 0
-    r28 = 0
-    r29 = 0
-    r30 = 0
-    r31 = 0
+        self.end1 = None
+        self.val1 = None
+        self.end2 = None
+        self.val2 = None
+        self.end3 = None
+        self.val3 = None
+        self.end4 = None
+        self.val4 = None
+
+        self.r0 = 0
+        self.r1 = 0
+        self.r2 = 0
+        self.r3 = 0
+        self.r4 = 0
+        self.r5 = 0
+        self.r6 = 0
+        self.r7 = 0
+        self.r8 = 0
+        self.r9 = 0
+        self.r10 = 0
+        self.r11 = 0
+        self.r12 = 0
+        self.r13 = 0
+        self.r14 = 0
+        self.r15 = 0
+        self.r16 = 0
+        self.r17 = 0
+        self.r18 = 0
+        self.r19 = 0
+        self.r20 = 0
+        self.r21 = 0
+        self.r22 = 0
+        self.r23 = 0
+        self.r24 = 0
+        self.r25 = 0
+        self.r26 = 0
+        self.r27 = 0
+        self.r28 = 0
+        self.r29 = 0
+        self.r30 = 0
+        self.r31 = 0
 
     def read(self, filePath):
         self.fr.read(filePath)
@@ -124,38 +128,38 @@ class Mips():
         self.clock = self.clock + 1
         self.atualizarLabels()
 
-    def setText(self, dest, ori, none):
+    def setText(self, label, ori, none):
         if ori is not None:
-            dest = ori
+            label["text"] = ori
         else:
-            dest = none
+            label["text"] = none
 
     def atualizarLabels(self):
         if self.view is not None:
-            self.setText(self.view.E1_instrucao["text"], self.E1.InstName, "")
-            self.setText(self.view.E2_instrucao["text"], self.E2.InstName, "")
-            self.setText(self.view.E3_instrucao["text"], self.E3.InstName, "")
-            self.setText(self.view.E4_instrucao["text"], self.E4.InstName, "")
-            self.setText(self.view.E5_instrucao["text"], self.E5.InstName, "")
-            self.setText(self.view.E1_controle["text"], self.E1.SinControle, "")
-            self.setText(self.view.E2_controle["text"], self.E2.SinControle, "")
-            self.setText(self.view.E3_controle["text"], self.E3.SinControle, "")
-            self.setText(self.view.E4_controle["text"], self.E4.SinControle, "")
-            self.setText(self.view.E5_controle["text"], self.E5.SinControle, "")
+            self.setText(self.view.E1_instrucao, self.E1.InstName, "")
+            self.setText(self.view.E2_instrucao, self.E2.InstName, "")
+            self.setText(self.view.E3_instrucao, self.E3.InstName, "")
+            self.setText(self.view.E4_instrucao, self.E4.InstName, "")
+            self.setText(self.view.E5_instrucao, self.E5.InstName, "")
+            self.setText(self.view.E1_controle, self.E1.SinControle, "")
+            self.setText(self.view.E2_controle, self.E2.SinControle, "")
+            self.setText(self.view.E3_controle, self.E3.SinControle, "")
+            self.setText(self.view.E4_controle, self.E4.SinControle, "")
+            self.setText(self.view.E5_controle, self.E5.SinControle, "")
 
             self.view.lclock["text"] = self.clock
             self.view.lpc["text"] = self.pc
             self.view.lconcluidas["text"] = self.concluidas
             self.view.lprodutividade["text"] = self.produtividade
 
-            self.setText(self.view.lend1["text"], self.end1, "")
-            self.setText(self.view.lval1["text"], self.val1, "?")
-            self.setText(self.view.lend2["text"], self.end2, "")
-            self.setText(self.view.lval2["text"], self.val2, "?")
-            self.setText(self.view.lend3["text"], self.end3, "")
-            self.setText(self.view.lval3["text"], self.val3, "?")
-            self.setText(self.view.lend4["text"], self.end4, "")
-            self.setText(self.view.lval4["text"], self.val4, "?")
+            self.setText(self.view.lend1, self.end1, "")
+            self.setText(self.view.lval1, self.val1, "?")
+            self.setText(self.view.lend2, self.end2, "")
+            self.setText(self.view.lval2, self.val2, "?")
+            self.setText(self.view.lend3, self.end3, "")
+            self.setText(self.view.lval3, self.val3, "?")
+            self.setText(self.view.lend4, self.end4, "")
+            self.setText(self.view.lval4, self.val4, "?")
 
             self.view.lr0["text"] = str(self.r0)
             self.view.lr1["text"] = str(self.r1)
@@ -188,4 +192,4 @@ class Mips():
             self.view.lr28["text"] = str(self.r28)
             self.view.lr29["text"] = str(self.r29)
             self.view.lr30["text"] = str(self.r30)
-            self.view.lr31["text"] = str(self.r31)
+            self.view.lr31["text"] = str(self.r31)  

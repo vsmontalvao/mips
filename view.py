@@ -81,7 +81,9 @@ class Application(Frame):
             if not self.pendulo.terminado:
                 self.pendulo.terminar()
                 self.pendulo = None
-        self.labels_iniciais()
+        self.zerar_labels()
+        if self.mips != None:
+            self.mips.inicio()
 
     def next(self):
         print "next!"
@@ -103,6 +105,62 @@ class Application(Frame):
             print "You should have chosen a file."
         self.FileName["text"] = file_path
         self.mips.read(file_path)
+
+    def zerar_labels(self):
+        self.lclock["text"] = "?"
+        self.lpc["text"] = "?"
+        self.lconcluidas["text"] = "?"
+        self.lprodutividade["text"] = "?"
+        self.E1_instrucao["text"] = "l1:addi R10, R0, 100"
+        self.E1_controle["text"] = ""
+        self.E2_instrucao["text"] = "l2:sw R0, 24(R0)"
+        self.E2_controle["text"] = ""
+        self.E3_instrucao["text"] = "l3:sw R0, 28(R0)"
+        self.E3_controle["text"] = ""
+        self.E4_instrucao["text"] = "l4:lw R6,28(R0)"
+        self.E4_controle["text"] = ""
+        self.E5_instrucao["text"] = "l5:mul R7,R6,R6"
+        self.E5_controle["text"] = ""
+        self.lval1["text"] = "24"
+        self.lend1["text"] = "?"
+        self.lval2["text"] = "28"
+        self.lend2["text"] = "?"
+        self.lval3["text"] = "28"
+        self.lend3["text"] = "?"
+        self.lval4["text"] = "28"
+        self.lend4["text"] = "?"
+        self.lr0["text"] = "0"
+        self.lr1["text"] = "0"
+        self.lr2["text"] = "0"
+        self.lr3["text"] = "0"
+        self.lr4["text"] = "0"
+        self.lr5["text"] = "0"
+        self.lr6["text"] = "0"
+        self.lr7["text"] = "0"
+        self.lr8["text"] = "?"
+        self.lr9["text"] = "?"
+        self.lr10["text"] = "?"
+        self.lr11["text"] = "?"
+        self.lr12["text"] = "?"
+        self.lr13["text"] = "?"
+        self.lr14["text"] = "?"
+        self.lr15["text"] = "?"
+        self.lr16["text"] = "?"
+        self.lr17["text"] = "?"
+        self.lr18["text"] = "?"
+        self.lr19["text"] = "?"
+        self.lr20["text"] = "?"
+        self.lr21["text"] = "?"
+        self.lr22["text"] = "?"
+        self.lr23["text"] = "?"
+        self.lr24["text"] = "?"
+        self.lr25["text"] = "?"
+        self.lr26["text"] = "?"
+        self.lr27["text"] = "?"
+        self.lr28["text"] = "?"
+        self.lr29["text"] = "?"
+        self.lr30["text"] = "?"
+        self.lr31["text"] = "?"
 
     def labels_iniciais(self):
         canvas = self.canvas
