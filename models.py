@@ -10,13 +10,24 @@ class InstrucaoR:
 		self.rd = bin(eval("0b"+instrucao[16:21]))
 		self.shamt = bin(eval("0b"+instrucao[21:26]))
 
+	def decode(self):
+		self.mips.rs = self.rs
+		self.mips.rt = self.rt
+		self.mips.rd = self.rd
+		self.mips.shamt = self.shamt
+
 class InstrucaoI:
 	
 	def __init__(self, mips, instrucao):
 		self.mips = mips
 		self.rs = bin(eval("0b"+instrucao[6:11]))
 		self.rt = bin(eval("0b"+instrucao[11:16]))
-		self.immediate = bin(eval("0b"+instrucao[16:32]))		
+		self.immediate = bin(eval("0b"+instrucao[16:32]))	
+
+	def decode(self):
+		self.mips.rs = self.rs
+		self.mips.rt = self.rt
+		self.mips.immediate = self.immediate
 
 class InstrucaoJ:
 	
@@ -24,13 +35,16 @@ class InstrucaoJ:
 		self.mips = mips
 		self.targetAddress = bin(eval("0b"+instrucao[6:32]))
 
+	def decode(self):
+		self.mips.targetAddress = self.targetAddress
+
 class Jmp(InstrucaoJ):
 	
 	def __init__(self, mips, instrucao):
 		InstrucaoJ.__init__(self, mips, instrucao)
 
 	def decode (self):
-		mips.targetAddress = self.targetAddress
+		InstrucaoJ.decode()
 
 	def execute(self):
 		mips.pc = bin(eval(self.mips.pc) + eval(self.mips.targetAddress)) #REVISAR acho que nao precisa reler o pc
@@ -44,11 +58,10 @@ class Add(InstrucaoR):
 		InstrucaoR.__init__(self, mips, instrucao)
 
 	def decode(self):
-		self.mips.rs = self.rs
-		self.mips.rt = self.rt
+		InstrucaoR.decode()
 
 	def execute(self):
-		self.mips.rd = bin(eval(self.mips.rs) + eval(self.mips.rt))
+		self.mips.reg[eval(self.mips.rd)] = bin(eval(self.mips.reg[eval(self.mips.rs)] + eval(self.mips.reg[eval(self.mips.rt)])
 
 	def texto(self):
 		return "add R" + str(eval(self.rd)) + ", R"+str(eval(self.rs)) + ", R" + str(eval(self.rt))
@@ -59,11 +72,10 @@ class Mul(InstrucaoR):
 		InstrucaoR.__init__(self, mips, instrucao)
 
 	def decode(self):
-		self.mips.rs = self.rs
-		self.mips.rt = self.rt
+		InstrucaoR.decode()
 
 	def execute(self):
-		self.mips.rd = bin(eval(self.mips.rs)*eval(self.mips.rt))
+		self.mips.reg[eval(self.mips.rd)] = bin(eval(self.mips.reg[eval(self.mips.rs)])*eval(self.mips.reg[eval(self.mips.rt)]))
 
 	def texto(self):
 		return "mul R" + str(eval(self.rd)) + ", R"+str(eval(self.rs)) + ", R" + str(eval(self.rt))
@@ -74,7 +86,7 @@ class Nop(InstrucaoR):
 		InstrucaoR.__init__(self, mips, instrucao)
 
 	def decode(self):
-		pass
+		InstrucaoR.decode()
 
 	def execute(self):
 		pass
@@ -88,11 +100,10 @@ class Sub(InstrucaoR):
 		InstrucaoR.__init__(self, mips, instrucao)
 
 	def decode(self):
-		self.mips.rs = self.rs
-		self.mips.rt = self.rt
+		InstrucaoR.decode()
 
 	def execute(self):
-		self.mips.rd = bin(eval(self.mips.rs) - eval(self.mips.rt))
+		self.mips.reg[eval(self.mips.rd)] = bin(eval(self.mips.reg[eval(self.mips.rs)]) - eval(self.mips.reg[eval(self.mips.rt)]))
 
 	def texto(self):
 		return "sub R" + str(eval(self.rd)) + ", R"+str(eval(self.rs)) + ", R" + str(eval(self.rt))
@@ -103,11 +114,10 @@ class Addi(InstrucaoI):
 		InstrucaoI.__init__(self, mips, instrucao)
 
 	def decode(self):
-		self.mips.rs = self.rs
-		self.mips.immediate = self.immediate
+		InstrucaoI.decode()
 
 	def execute(self):
-		self.mips.rt = bin(eval(self.mips.rs) + eval(self.mips.immediate))
+		self.mips.reg[eval(self.mips.rt)] = bin(eval(self.mips.reg[eval(self.mips.rs)]) + eval(self.mips.reg[eval(self.mips.immediate)]))
 
 	def texto(self):
 		return "addi R" + str(eval(self.rs)) + ", R"+str(eval(self.rt)) + ", " + str(eval(self.immediate))
@@ -118,12 +128,10 @@ class Beq(InstrucaoI):
 		InstrucaoI.__init__(self, mips, instrucao)
 
 	def decode(self):
-		self.mips.rs = self.rs
-		self.mips.rt = self.rt
-		self.mips.immediate = self.immediate
+		InstrucaoI.decode()
 
 	def execute(self):
-		if self.mips.rs == self.mips.rt:
+		if self.mips.reg[eval(self.mips.rs)] == self.mips.reg[eval(self.mips.rt)]:
 			self.mips.pc = bin(eval(self.mips.pc) + 4 + eval(self.mips.immediate))
 
 	def texto(self):
@@ -135,12 +143,10 @@ class Ble(InstrucaoI):
 		InstrucaoI.__init__(self, mips, instrucao)
 
 	def decode(self):
-		self.mips.rs = self.rs
-		self.mips.rt = self.rt
-		self.mips.immediate = self.immediate
+		InstrucaoI.decode()
 
 	def execute(self):
-		if self.mips.rs <= self.mips.rt:
+		if self.mips.reg[eval(self.mips.rs)] <= self.mips.reg[eval(self.mips.rt)]:
 			self.mips.pc = bin(eval(self.mips.immediate))      
 
 	def texto(self):
@@ -152,12 +158,10 @@ class Bne(InstrucaoI):
 		InstrucaoI.__init__(self, mips, instrucao)
 
 	def decode(self):
-		self.mips.rs = self.rs
-		self.mips.rt = self.rt
-		self.mips.immediate = self.immediate
+		InstrucaoI.decode()
 
 	def execute(self):
-		if self.mips.rs != self.mips.rt:
+		if self.mips.reg[eval(self.mips.rs)] != self.mips.reg[eval(self.mips.rt)]:
 			self.mips.pc = bin(eval(self.mips.pc) + 4 + eval(self.mips.immediate))
 
 	def texto(self):
@@ -169,9 +173,7 @@ class Lw(InstrucaoI):
 		InstrucaoI.__init__(self, mips, instrucao)
 
 	def decode(self):
-		self.mips.rs = self.rs
-		self.mips.rt = self.rt
-		self.mips.immediate = self.immediate
+		InstrucaoI.decode()
 
 	def execute(self, mips):
 		pass
@@ -185,9 +187,7 @@ class Sw(InstrucaoI):
 		InstrucaoI.__init__(self, mips, instrucao)
 
 	def decode(self):
-		self.mips.rs = self.rs
-		self.mips.immediate = self.immediate
-		self.mips.rt = self.rt
+		InstrucaoI.decode()
 
 	def execute(self):
 		pass
@@ -271,6 +271,22 @@ class InstructionExecute(Estagio):
 	def do(self):
 		self.instrucao.execute()
 
+class MemoryAccess(Estagio):
+	
+	def __init__(self, num, mips):
+		Estagio.__init__(self, num, mips)
+
+	def do(self):
+		pass #escrever no local da memoria
+
+class WriteBack(Estagio):
+	
+	def __init__(self, num, mips):
+		Estagio.__init__(self, num, mips)
+
+	def do(self):
+		pass #escrever novamente no registrador do mips
+
 class Mips:
 	def __init__(self):
 		self.inicio()
@@ -278,6 +294,7 @@ class Mips:
 		self.mem = [0] * 2**15 # vc pode checar o tamanho com len(self.mem) e acessar cada posicao
 							   # independentemente com self.mips.mem[i] dai para manipular os 32 bits podemos
 							   # mexer com os valores binarios e decimais
+		self.reg = [0] * 2**5
 
 
 	def read(self, filePath):
@@ -291,8 +308,8 @@ class Mips:
 		self.E1 = InstructionFetch(1, self)
 		self.E2 = InstructionDecodeRegisterFetch(2, self)
 		self.E3 = InstructionExecute(3, self)
-		self.E4 = Estagio(4, self)
-		self.E5 = Estagio(5, self)
+		self.E4 = MemoryAccess(4, self)
+		self.E5 = WriteBack(5, self)
 
 		self.E1.bloquear() #para manter o pc em 0
 
@@ -350,6 +367,7 @@ class Mips:
 	def proxEstagio(self):
 		self.clock = self.clock + 1
 
+		
 		if not self.E5.bloqueado:
 			if not self.E4.bloqueado:
 				self.E5.setInstrucao(self.E4.instrucao)
@@ -360,13 +378,16 @@ class Mips:
 					if not self.E2.bloqueado:
 						self.E3.setInstrucao(self.E2.instrucao)
 						self.E3.do()
+						print "antes de executar verificacao 1"
 						if not self.E1.bloqueado:
 							self.E2.setInstrucao(self.E1.instrucao)
+							print self.E2.InstName
 							self.E2.do()
 							self.pc = bin(eval(self.pc) + 4)							
 						else:
 							self.E2.setNop()
 							self.E1.desbloquear()
+						print "antes de executar 1"
 						self.E1.setInstrucao(self.E2.decodInst(self.E1.do(eval(self.pc)/4)))
 					else:
 						self.E3.setNop()
