@@ -141,11 +141,14 @@ class Beq(InstrucaoI):
 		InstrucaoI.__init__(self, mips, instrucao)
 
 	def execute(self):
+		self.equal = False
 		if self.mips.reg[eval(self.mips.A)] == self.mips.reg[eval(self.mips.B)]:
+			self.equal = True
 			self.mips.ULA = bin(eval(self.mips.pc) + 4 + eval(self.mips.Imm))
 
 	def memacess(self):
-		self.mips.pc = self.mips.ULA
+		if self.equal == True
+			self.mips.pc = self.mips.ULA
 
 	def writeback(self):
 		pass
@@ -159,9 +162,17 @@ class Ble(InstrucaoI):
 		InstrucaoI.__init__(self, mips, instrucao)
 
 	def execute(self):
+		self.equal = False
+		if self.mips.reg[eval(self.mips.rs)] <= self.mips.reg[eval(self.mips.rt)]:
+			self.equal = True
+			self.mips.ULA = bin(eval(self.mips.immediate))      
+
+	def memacess(self):
+		if self.equal == True
+			self.mips.pc = self.mips.ULA
+
+	def writeback(self):
 		pass
-		# if self.mips.reg[eval(self.mips.rs)] <= self.mips.reg[eval(self.mips.rt)]:
-		# 	self.mips.pc = bin(eval(self.mips.immediate))      
 
 	def texto(self):
 		return "ble R" + str(eval(self.rs)) + ", R"+str(eval(self.rt)) + ", " + str(eval(self.immediate))  
@@ -172,9 +183,17 @@ class Bne(InstrucaoI):
 		InstrucaoI.__init__(self, mips, instrucao)
 
 	def execute(self):
+		self.equal = False
+		if self.mips.reg[eval(self.mips.rs)] != self.mips.reg[eval(self.mips.rt)]:
+			self.equal = True
+			self.mips.pc = bin(eval(self.mips.pc) + 4 + eval(self.mips.immediate))
+
+	def memacess(self):
+		if self.equal == True
+			self.mips.pc = self.mips.ULA
+
+	def writeback(self):
 		pass
-		# if self.mips.reg[eval(self.mips.rs)] != self.mips.reg[eval(self.mips.rt)]:
-		# 	self.mips.pc = bin(eval(self.mips.pc) + 4 + eval(self.mips.immediate))
 
 	def texto(self):
 		return "bne R" + str(eval(self.rs)) + ", R"+str(eval(self.rt)) + ", " + str(eval(self.immediate))
