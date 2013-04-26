@@ -16,7 +16,7 @@ class InstrucaoI:
 		self.mips = mips
 		mips.rs = bin(eval("0b"+instrucao[6:11]))
 		mips.rt = bin(eval("0b"+instrucao[11:16]))
-		mips.immediate = bin(eval("0b"+instrucao[16:32]))
+		mips.immediate = bin(eval("0b"+instrucao[16:32]))		
 
 class InstrucaoJ:
 	
@@ -151,10 +151,10 @@ class Sw(InstrucaoI):
 class Estagio:
 	def __init__(self, num, mips):
 		self.num = num
-		self.InstName = str(num)+":"
 		self.SinControle = ""
 		self.mips = mips
 		self.bloqueado = False
+		self.setNop()
 
 	def desbloquear(self):
 		self.bloqueado = False
@@ -162,49 +162,60 @@ class Estagio:
 	def bloquear(self):
 		self.bloqueado = True
 
+	def setNop(self):
+		self.setInstrucao(Nop(self.mips, "0"*32))
+
+	def setInstrucao(self, instrucao):
+		self.instrucao = instrucao
+		self.InstName = "l" + str(self.num) + ": " + self.instrucao.texto()
+
 class InstructionFetch(Estagio):
 
 	def __init__(self, num, mips):
 		Estagio.__init__(self, num,  mips)
 
 	def do(self, i):
-		self.instruction = self.mips.fr.getInst(i)[0:32]
-		return self.instruction
+		return self.mips.fr.getInst(i)[0:32]
 
 class InstructionDecodeRegisterFetch(Estagio):
 
 	def __init__(self, num, mips):
 		Estagio.__init__(self, num, mips)
 
-	def do(self, instrucao):
+	def decodInst(self, instrucao):
 		instructionCode = instrucao[0:6]
 		if instructionCode == "000010":
-			self.instrucaoDecodificada = Jmp(self.mips, instrucao) 
+			instrucaoDecodificada = Jmp(self.mips, instrucao) 
 		else:
 			if instructionCode == "000000":
 				if instrucao[26:32] == "100000":
-					self.instrucaoDecodificada = Add(self.mips, instrucao)
+					instrucaoDecodificada = Add(self.mips, instrucao)
 				elif instrucao[26:32] == "011000":
-					self.instrucaoDecodificada = Mul(self.mips, instrucao)
+					instrucaoDecodificada = Mul(self.mips, instrucao)
 				elif instrucao[26:32] == "000000":
-					self.instrucaoDecodificada = Nop(self.mips, instrucao)
+					instrucaoDecodificada = Nop(self.mips, instrucao)
 				elif instrucao[26:32] == "100010":
-					self.instrucaoDecodificada = Sub(self.mips, instrucao)
+					instrucaoDecodificada = Sub(self.mips, instrucao)
 			else:
-				self.immediate = instrucao[16:32]
 				if instructionCode == "001000":
-					self.instrucaoDecodificada = Addi(self.mips, instrucao)
+					print "addi"
+					instrucaoDecodificada = Addi(self.mips, instrucao)
 				elif instructionCode == "000101":
-					self.instrucaoDecodificada = Beq(self.mips, instrucao)
+					instrucaoDecodificada = Beq(self.mips, instrucao)
 				elif instructionCode == "000111":
-					self.instrucaoDecodificada = Ble(self.mips, instrucao)
+					instrucaoDecodificada = Ble(self.mips, instrucao)
 				elif instructionCode == "000100":
-					self.instrucaoDecodificada = Bne(self.mips, instrucao)
+					instrucaoDecodificada = Bne(self.mips, instrucao)
 				elif instructionCode == "100011":
-					self.instrucaoDecodificada = Lw(self.mips, instrucao)
+					instrucaoDecodificada = Lw(self.mips, instrucao)
 				elif instructionCode == "101011":
-					self.instrucaoDecodificada = Sw(self.mips, instrucao)
-		return self.instrucaoDecodificada
+					instrucaoDecodificada = Sw(self.mips, instrucao)
+
+		return instrucaoDecodificada
+
+	def do(self):
+		self.instrucao = self.decodInst(instrucao)
+		return self.instrucao
 
 class InstructionExecute(Estagio):
 	
@@ -218,7 +229,7 @@ class Mips:
 	def __init__(self):
 		self.inicio()
 		self.fr = FileReader()   
-		self.mem = [0] * 2**15 #vc pode checar o tamanho com len(self.mem) e acessar cada posicao
+		self.mem = [0] * 2**15 # vc pode checar o tamanho com len(self.mem) e acessar cada posicao
 							   # independentemente com self.mips.mem[i] dai para manipular os 32 bits podemos
 							   # mexer com os valores binarios e decimais
 
@@ -290,22 +301,29 @@ class Mips:
 
 	def proxEstagio(self):
 		self.clock = self.clock + 1
-		if not self.E1.bloqueado:         
-			self.pc = self.pc + 1   
-		else:
-			self.E1.desbloquear()
-		inst_bin = self.E1.do(self.pc)
-		print inst_bin    
-		if not self.E2.bloqueado:
-			inst_decod = self.E2.do(inst_bin)
-			print inst_decod.texto()
-		# else:
-		#     self.E1.bloquear()
-		# if not self.E3.bloqueado:
-		#     self.E3.do(inst_decod)
-		# else:
-		#     self.E1.bloquear()
-		#     self.E2.bloquear()
+
+		if not self.E5.bloqueado:
+			if not self.E4.bloqueado:
+				self.E5.setInstrucao(self.E4.instrucao)
+				if not self.E3.bloqueado:
+					self.E4.setInstrucao(self.E3.instrucao)
+					if not self.E2.bloqueado:
+						self.E3.setInstrucao(self.E2.instrucao)
+						if not self.E1.bloqueado:
+							self.E2.setInstrucao(self.E1.instrucao)
+							self.pc = self.pc + 1
+						else:
+							self.E2.setNop()
+							self.E1.desbloquear()
+						print "antes"
+						self.E1.setInstrucao(self.E2.decodInst(self.E1.do(self.pc)))
+						print self.E1.instrucao.texto()
+					else:
+						self.E3.setNop()
+				else:
+					self.E4.setNop()
+			else:
+				self.E5.setNop()
 
 		self.atualizarLabels()
 
