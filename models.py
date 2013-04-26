@@ -204,6 +204,12 @@ class Lw(InstrucaoI):
 		InstrucaoI.__init__(self, mips, instrucao)
 
 	def execute(self):
+		self.mips.ULA = bin(eval(self.mips.rs) + eval(self.mips.immediate))
+
+	def memacess(self):
+		self.mips.rt = self.mips.reg[eval(self.mips.ULA)]
+
+	def writeback(self):
 		pass
 
 	def texto(self):
@@ -215,6 +221,12 @@ class Sw(InstrucaoI):
 		InstrucaoI.__init__(self, mips, instrucao)
 
 	def execute(self):
+		self.mips.ULA = bin(eval(self.mips.rs) + eval(self.mips.immediate))
+
+	def memacess(self):
+		self.mips.reg[eval(self.mips.ULA)] = bin(eval(self.mips.rt))
+
+	def writeback(self):
 		pass
 
 	def texto(self):
