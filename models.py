@@ -2,7 +2,6 @@ print "MODELS"
 from filereader import FileReader
 
 class InstrucaoR:
-	
 	def __init__(self, mips, instrucao):
 		self.mips = mips
 		self.rs = bin(eval("0b"+instrucao[6:11]))
@@ -16,7 +15,7 @@ class InstrucaoR:
 		# self.mips.rd = self.rd
 		# self.mips.shamt = self.shamt
 
-	def memacess(self):
+	def memaccess(self):
 		pass
 
 	def writeback(self):
@@ -55,7 +54,7 @@ class Jmp(InstrucaoJ):
 	def execute(self):
 		pass
 
-	def memacess(self):
+	def memaccess(self):
 		mips.pc = self.mips.targetAddress
 
 	def writeback(self):
@@ -98,7 +97,7 @@ class Nop(InstrucaoR):
 	def execute(self):
 		pass
 
-	def memacess(self):
+	def memaccess(self):
 		pass
 
 	def writeback(self):
@@ -126,7 +125,7 @@ class Addi(InstrucaoI):
 	def execute(self):
 		self.mips.ULA = self.mips.A + self.mips.Imm
 
-	def memacess(self):
+	def memaccess(self):
 		pass
 
 	def writeback(self):
@@ -144,7 +143,7 @@ class Beq(InstrucaoI):
 		if self.mips.reg[eval(self.mips.A)] == self.mips.reg[eval(self.mips.B)]:
 			self.mips.ULA = bin(eval(self.mips.pc) + 4 + eval(self.mips.Imm))
 
-	def memacess(self):
+	def memaccess(self):
 		self.mips.pc = self.mips.ULA
 
 	def writeback(self):
@@ -267,17 +266,25 @@ class InstructionDecodeRegisterFetch(Estagio):
 		return instrucaoDecodificada
 
 	def do(self):
-
+		self.bloquear()
 		self.instrucao.decode()
+		self.desbloquear()
 		return self.instrucao
 
 class InstructionExecute(Estagio):
+	self.cont = 0
 	
 	def __init__(self, num, mips):
 		Estagio.__init__(self, num, mips)
 
 	def do(self):
-		self.instrucao.execute()
+		self.bloquear()
+		if self.instrucao.__class__.__name__ == 'Mul':
+			if self.cont == 0:
+				self.instrucao.execute()
+				self.cont = 1
+			else:
+				self.desbloquear()
 
 class MemoryAccess(Estagio):
 	
@@ -285,7 +292,9 @@ class MemoryAccess(Estagio):
 		Estagio.__init__(self, num, mips)
 
 	def do(self):
-		pass #escrever no local da memoria
+		self.bloquear()
+		self.instrucao.memaccess()
+		self.desbloquear()
 
 class WriteBack(Estagio):
 	
@@ -293,7 +302,9 @@ class WriteBack(Estagio):
 		Estagio.__init__(self, num, mips)
 
 	def do(self):
-		pass #escrever novamente no registrador do mips
+		self.bloquear()
+		self.instrucao.writeback()
+		self.debloquear()
 
 class Mips:
 	def __init__(self):
