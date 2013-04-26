@@ -2,10 +2,12 @@ print "MODELS"
 from filereader import FileReader
 
 class Estagio:
-    def __init__(self, num):
+    def __init__(self, num, mips):
         self.num = num
         self.InstName = str(num)+":"
         self.SinControle = ""
+        self.mips = mips
+        self.bloqueado = False
 
     def desbloquear(self):
         self.bloqueado = True
@@ -18,22 +20,17 @@ class Estagio:
 
 class InstructionFetch(Estagio):
 
-    def __init__(self, num):
-        Estagio.__init__(self, num)
-        self.fr = FileReader()        
+    def __init__(self, num, mips):
+        Estagio.__init__(self, num,  mips)
 
-    def read(self, filePath):
-        self.fr.read(filePath)
-
-    def do(self, filePath, i):
-        self.read(filePath)
-        instruction = self.fr.getInst(i)[0:32]
+    def do(self, i):
+        instruction = self.mips.fr.getInst(i)[0:32]
         return instruction
 
 class InstructionDecodeRegisterFetch(Estagio):
 
-    def __init__(self, num):
-        Estagio.__init__(self, num)
+    def __init__(self, num, mips):
+        Estagio.__init__(self, num, mips)
 
     def do(self, mips, instrucao):
         instructionCode = instrucao[0:6]
@@ -67,8 +64,8 @@ class InstructionDecodeRegisterFetch(Estagio):
 
 class InstructionExecute(Estagio):
     
-    def __init__(self, num):
-        Estagio.__init__(self, num)
+    def __init__(self, num, mips):
+        Estagio.__init__(self, num, mips)
 
     def do(self, mips, instrucaoDecodificada):
         instrucaoDecodificada.execute(mips)
@@ -76,17 +73,21 @@ class InstructionExecute(Estagio):
 class Mips:
     def __init__(self):
         self.inicio()
+        self.fr = FileReader()   
+
+    def read(self, filePath):
+        self.fr.read(filePath)
 
     def inicio(self):
         self.clock = -1
         self.pc = -1
         self.concluidas = 0
         self.produtividade = 0
-        self.E1 = InstructionFetch(1)
-        self.E2 = InstructionDecodeRegisterFetch(2)
-        self.E3 = InstructionExecute(3)
-        self.E4 = Estagio(4)
-        self.E5 = Estagio(5)
+        self.E1 = InstructionFetch(1, self)
+        self.E2 = InstructionDecodeRegisterFetch(2, self)
+        self.E3 = InstructionExecute(3, self)
+        self.E4 = Estagio(4, self)
+        self.E5 = Estagio(5, self)
 
         self.end1 = None
         self.val1 = None
@@ -141,7 +142,11 @@ class Mips:
 
     def proxEstagio(self):
         self.clock = self.clock + 1
+        if not self.E1.bloqueado:
+            self.pc = self.pc + 1
+            print self.E1.do(self.pc)
         self.atualizarLabels()
+
 
     def setText(self, label, ori, none):
         if ori is not None:
