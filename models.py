@@ -218,6 +218,10 @@ class Mips:
 	def __init__(self):
 		self.inicio()
 		self.fr = FileReader()   
+		self.mem = [0] * 2**15 #vc pode checar o tamanho com len(self.mem) e acessar cada posicao
+							   # independentemente com self.mips.mem[i] dai para manipular os 32 bits podemos
+							   # mexer com os valores binarios e decimais
+
 
 	def read(self, filePath):
 		self.fr.read(filePath)
