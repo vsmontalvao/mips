@@ -198,7 +198,6 @@ class InstructionDecodeRegisterFetch(Estagio):
 					instrucaoDecodificada = Sub(self.mips, instrucao)
 			else:
 				if instructionCode == "001000":
-					print "addi"
 					instrucaoDecodificada = Addi(self.mips, instrucao)
 				elif instructionCode == "000101":
 					instrucaoDecodificada = Beq(self.mips, instrucao)
@@ -239,7 +238,7 @@ class Mips:
 
 	def inicio(self):
 		self.clock = -1
-		self.pc = -1
+		self.pc = bin(0)
 		self.concluidas = 0
 		self.produtividade = 0
 		self.E1 = InstructionFetch(1, self)
@@ -247,6 +246,8 @@ class Mips:
 		self.E3 = InstructionExecute(3, self)
 		self.E4 = Estagio(4, self)
 		self.E5 = Estagio(5, self)
+
+		self.E1.bloquear() #para manter o pc em 0
 
 		self.end1 = None
 		self.val1 = None
@@ -311,13 +312,11 @@ class Mips:
 						self.E3.setInstrucao(self.E2.instrucao)
 						if not self.E1.bloqueado:
 							self.E2.setInstrucao(self.E1.instrucao)
-							self.pc = self.pc + 1
+							self.pc = bin(eval(self.pc) + 4)
 						else:
 							self.E2.setNop()
 							self.E1.desbloquear()
-						print "antes"
-						self.E1.setInstrucao(self.E2.decodInst(self.E1.do(self.pc)))
-						print self.E1.instrucao.texto()
+						self.E1.setInstrucao(self.E2.decodInst(self.E1.do(eval(self.pc)/4)))
 					else:
 						self.E3.setNop()
 				else:
@@ -348,7 +347,7 @@ class Mips:
 			self.setText(self.view.E5_controle, self.E5.SinControle, "")
 
 			self.view.lclock["text"] = self.clock
-			self.view.lpc["text"] = self.pc
+			self.view.lpc["text"] = self.pc[2:]
 			self.view.lconcluidas["text"] = self.concluidas
 			self.view.lprodutividade["text"] = self.produtividade
 
