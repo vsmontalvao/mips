@@ -147,7 +147,7 @@ class Beq(InstrucaoI):
 			self.mips.ULA = bin(eval(self.mips.pc) + 4 + eval(self.mips.Imm))
 
 	def memacess(self):
-		if self.equal == True
+		if self.equal == True:
 			self.mips.pc = self.mips.ULA
 
 	def writeback(self):
@@ -168,7 +168,7 @@ class Ble(InstrucaoI):
 			self.mips.ULA = bin(eval(self.mips.immediate))      
 
 	def memacess(self):
-		if self.equal == True
+		if self.equal == True:
 			self.mips.pc = self.mips.ULA
 
 	def writeback(self):
@@ -189,7 +189,7 @@ class Bne(InstrucaoI):
 			self.mips.pc = bin(eval(self.mips.pc) + 4 + eval(self.mips.immediate))
 
 	def memacess(self):
-		if self.equal == True
+		if self.equal == True:
 			self.mips.pc = self.mips.ULA
 
 	def writeback(self):
