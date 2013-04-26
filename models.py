@@ -11,10 +11,16 @@ class InstrucaoR:
 		self.shamt = bin(eval("0b"+instrucao[21:26]))
 
 	def decode(self):
-		self.mips.rs = self.rs
-		self.mips.rt = self.rt
-		self.mips.rd = self.rd
-		self.mips.shamt = self.shamt
+		self.mips.rs = self.mips.reg[eval(self.rs)]
+		self.mips.rt = self.mips.reg[eval(self.rt)]
+		# self.mips.rd = self.rd
+		# self.mips.shamt = self.shamt
+
+	def memacess(self):
+		pass
+
+	def writeback(self):
+		self.mips.reg[eval(self.rd)] = self.resultado
 
 class InstrucaoI:
 	
@@ -25,8 +31,8 @@ class InstrucaoI:
 		self.immediate = bin(eval("0b"+instrucao[16:32]))	
 
 	def decode(self):
-		self.mips.rs = self.rs
-		self.mips.rt = self.rt
+		self.mips.rs = self.mips.reg[eval(self.rs)]
+		self.mips.rt = self.mips.reg[eval(self.rt)]
 		self.mips.immediate = self.immediate
 
 class InstrucaoJ:
@@ -38,6 +44,12 @@ class InstrucaoJ:
 	def decode(self):
 		self.mips.targetAddress = self.targetAddress
 
+	def memacess(self):
+		pass
+
+	def writeback(self):
+		pass
+
 class Jmp(InstrucaoJ):
 	
 	def __init__(self, mips, instrucao):
@@ -46,6 +58,7 @@ class Jmp(InstrucaoJ):
 	def execute(self):
 		# mips.pc = self.mips.targetAddress
 		pass
+
 
 	def texto(self):    
 		return "jmp" + str(eval(self.targetAddress))
@@ -181,6 +194,7 @@ class Estagio:
 		self.mips = mips
 		self.bloqueado = False
 		self.setNop()
+		self.saida = 0
 
 	def desbloquear(self):
 		self.bloqueado = False
@@ -239,6 +253,7 @@ class InstructionDecodeRegisterFetch(Estagio):
 		return instrucaoDecodificada
 
 	def do(self):
+
 		self.instrucao.decode()
 		return self.instrucao
 
