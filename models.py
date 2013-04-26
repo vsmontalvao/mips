@@ -24,8 +24,8 @@ class InstructionFetch(Estagio):
         Estagio.__init__(self, num,  mips)
 
     def do(self, i):
-        instruction = self.mips.fr.getInst(i)[0:32]
-        return instruction
+        self.instruction = self.mips.fr.getInst(i)[0:32]
+        return self.instruction
 
 class InstructionDecodeRegisterFetch(Estagio):
 
@@ -67,8 +67,8 @@ class InstructionExecute(Estagio):
     def __init__(self, num, mips):
         Estagio.__init__(self, num, mips)
 
-    def do(self, mips, instrucaoDecodificada):
-        instrucaoDecodificada.execute(mips)
+    def do(self, instrucaoDecodificada):
+        instrucaoDecodificada.execute(self.mips)
 
 class Mips:
     def __init__(self):
@@ -144,7 +144,9 @@ class Mips:
         self.clock = self.clock + 1
         if not self.E1.bloqueado:
             self.pc = self.pc + 1
-            print self.E1.do(self.pc)
+            inst = self.E1.do(self.pc)
+        if not self.E2.bloqueado:
+            print inst
         self.atualizarLabels()
 
 
