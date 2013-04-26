@@ -1,7 +1,6 @@
 print "MODELS"
 from filereader import FileReader
 
-
 class Estagio:
     def __init__(self, num):
         self.num = num
@@ -17,9 +16,65 @@ class Estagio:
     def getStatusBloqueado(self):
         return self.bloqueado
 
+class InstructionFetch(Estagio):
+
+    def __init__(self, num):
+        Estagio.__init__(self, num)
+        self.fr = FileReader()        
+
+    def read(self, filePath):
+        self.fr.read(filePath)
+
+    def do(self, filePath, i):
+        self.read(filePath)
+        instruction = self.fr.getInst(i)[0:32]
+        return instruction
+
+class InstructionDecodeRegisterFetch(Estagio):
+
+    def __init__(self, num):
+        Estagio.__init__(self, num)
+
+    def do(self, mips, instrucao):
+        instructionCode = instrucao[0:6]
+        if instructionCode == "000010":
+            self.instrucaoDecodificada = Jmp(mips, instrucao) 
+        else:
+            if instructionCode == "000000":
+                if instrucao[26:32] == "100000":
+                    self.instrucaoDecodificada = Add(mips, instrucao)
+                elif instrucao[26:32] == "011000":
+                    self.instrucaoDecodificada = Mul(mips, instrucao)
+                elif instrucao[26:32] == "000000":
+                    self.instrucaoDecodificada = Nop(mips, instrucao)
+                elif instrucao[26:32] == "100010":
+                    self.instrucaoDecodificada = Sub(mips, instrucao)
+            else:
+                self.immediate = instrucao[16:32]
+                if instructionCode == "001000":
+                    self.instrucaoDecodificada = Addi(mips, instrucao)
+                elif instructionCode == "000101":
+                    self.instrucaoDecodificada = Beq(mips, instrucao)
+                elif instructionCode == "000111":
+                    self.instrucaoDecodificada = Ble(mips, instrucao)
+                elif instructionCode == "000100":
+                    self.instrucaoDecodificada = Bne(mips, instrucao)
+                elif instructionCode == "100011":
+                    self.instrucaoDecodificada = Lw(mips, instrucao)
+                elif instructionCode == "101011":
+                    self.instrucaoDecodificada = Sw(mips, instrucao)
+        return self.instrucaoDecodificada
+
+class InstructionExecute(Estagio):
+    
+    def __init__(self, num):
+        Estagio.__init__(self, num)
+
+    def do(self, mips, instrucaoDecodificada):
+        instrucaoDecodificada.execute(mips)
+
 class Mips:
     def __init__(self):
-        self.fr = FileReader()
         self.inicio()
 
     def inicio(self):
@@ -27,9 +82,9 @@ class Mips:
         self.pc = -1
         self.concluidas = 0
         self.produtividade = 0
-        self.E1 = Estagio(1)
-        self.E2 = Estagio(2)
-        self.E3 = Estagio(3)
+        self.E1 = InstructionFetch(1)
+        self.E2 = InstructionDecodeRegisterFetch(2)
+        self.E3 = InstructionExecute(3)
         self.E4 = Estagio(4)
         self.E5 = Estagio(5)
 
@@ -75,56 +130,8 @@ class Mips:
         self.r30 = 0
         self.r31 = 0
 
-    def read(self, filePath):
-        self.fr.read(filePath)
-        # self.getInst(2)
-
     def setView(self, view):
         self.view = view
-
-    def getInst(self, i):
-        instruction = self.fr.getInst(i)[0:32]
-        return instruction
-
-    def instructionFetch(self, i):
-        instructionCode = self.getInst(i)[0:6]
-        return instructionCode
-
-    def instructionDecodeRegisterFetch(self, instructionCode, i):
-        bits = self.getInst(i)
-        if instructionCode == "000010":
-            self.address = bits[6:32]
-        else:
-            self.s = bits[6:11]
-            self.t = bits[11:16]
-            if instructionCode == "000000":
-                self.d = bits(i)[16:21]
-                self.shamt = bits(i)[21:26]
-                if bits[26:32] == "100000":
-                    self.instruction = "Add"
-                elif bits[26:32] == "011000":
-                    self.instruction = "Mul"
-                elif bits[26:32] == "000000":
-                    self.instruction = "Nop"
-                elif bits[26:32] == "100010":
-                    self.instruction = "Sub"
-            else:
-                self.immediate = bits[16:32]
-                if instructionCode == "001000":
-                    self.instruction = "Addi"
-                elif instructionCode == "000101":
-                    self.instruction = "Beq"
-                elif instructionCode == "000111":
-                    self.instruction = "Ble"
-                elif instructionCode == "000100":
-                    self.instruction = "Bne"
-                elif instructionCode == "100011":
-                    self.instruction = "Lw"
-                elif instructionCode == "101011":
-                    self.instruction = "Sw"
-
-    def instructionExecute(self):
-        pass
 
     def memoryAccess(self):
         pass
@@ -203,21 +210,112 @@ class Mips:
             self.view.lr31["text"] = str(self.r31)  
 
 class InstrucaoR:
-    def __init__(self, instrucao):
-        self.rs = instrucao[6:11]
-        self.rt = instrucao[11:16]
-        self.rd = instrucao[16:21]
-        self.shamt = instrucao[21:26]
+    
+    def __init__(self, mips, instrucao):
+        mips.rs = bin(eval("0b"+instrucao[6:11]))
+        mips.rt = bin(eval("0b"+instrucao[11:16]))
+        mips.rd = bin(eval("0b"+instrucao[16:21]))
+        mips.shamt = bin(eval("0b"+instrucao[21:26]))
 
 class InstrucaoI:
-    def __init__(self, instrucao):
-        self.rs = instrucao[6:11]
-        self.rt = instrucao[11:16]
-        self.immediate = instrucao[16:32]
+    
+    def __init__(self, mips, instrucao):
+        mips.rs = bin(eval("0b"+instrucao[6:11]))
+        mips.rt = bin(eval("0b"+instrucao[11:16]))
+        mips.immediate = bin(eval("0b"+instrucao[16:32]))
 
 class InstrucaoJ:
-    def __init__(self,instrucao):
-        self.targetAddress = instrucao[6:32]
+    
+    def __init__(self, mips, instrucao):
+        mips.targetAddress = bin(eval("0b"+instrucao[6:32]))
 
+class Jmp(InstrucaoJ):
+    
+    def __init__(self, mips, instrucao):
+        InstrucaoJ.__init__(self, mips, instrucao)
 
+    def execute(self, mips):
+        mips.pc = bin(eval(mips.pc) + eval(mips.targetAddress))
 
+class Add(InstrucaoR):
+    
+    def __init__(self, mips, instrucao):
+        InstrucaoR.__init__(self, mips, instrucao)
+
+    def execute(self, mips):
+        mips.rd = bin(eval(mips.rs) + eval(mips.rt))
+
+class Mul(InstrucaoR):
+    
+    def __init__(self, mips, instrucao):
+        InstrucaoR.__init__(self, mips, instrucao)
+
+    def execute(self, mips):
+        mips.rd = bin(eval(mips.rs)*eval(mips.rt))
+
+class Nop(InstrucaoR):
+    
+    def __init__(self, mips, instrucao):
+        InstrucaoR.__init__(self, mips, instrucao)
+
+    def execute(self, mips):
+        pass
+
+class Sub(InstrucaoR):
+    
+    def __init__(self, mips, instrucao):
+        InstrucaoR.__init__(self, mips, instrucao)
+
+    def execute(self, mips):
+        mips.rd = bin(eval(mips.rs) - eval(mips.rt))
+
+class Addi(InstrucaoI):
+
+    def __init__(self, mips, instrucao):
+        InstrucaoI.__init__(self, mips, instrucao)
+
+    def execute(self, mips):
+        mips.rt = bin(eval(mips.rs) + eval(mips.immediate))
+
+class Beq(InstrucaoI):
+
+    def __init__(self, mips, instrucao):
+        InstrucaoI.__init__(self, mips, instrucao)
+
+    def execute(self, mips):
+        if mips.rs == mips.rt:
+            mips.pc = bin(eval(mips.pc) + 4 + eval(mips.immediate))
+
+class Ble(InstrucaoI):
+
+    def __init__(self, mips, instrucao):
+        InstrucaoI.__init__(self, mips, instrucao)
+
+    def execute(self, mips):
+        if mips.rs <= mips.rt:
+            mips.pc = bin(eval(mips.immediate))        
+
+class Bne(InstrucaoI):
+
+    def __init__(self, mips, instrucao):
+        InstrucaoI.__init__(self, mips, instrucao)
+
+    def execute(self, mips):
+        if mips.rs != mips.rt:
+            mips.pc = bin(eval(mips.pc) + 4 + eval(mips.immediate))
+
+class Lw(InstrucaoI):
+
+    def __init__(self, mips, instrucao):
+        InstrucaoI.__init__(self, mips, instrucao)
+
+    def execute(self, mips):
+        pass
+
+class Sw(InstrucaoI):
+
+    def __init__(self, mips, instrucao):
+        InstrucaoI.__init__(self, mips, instrucao)
+
+    def execute(self, mips):
+        pass
