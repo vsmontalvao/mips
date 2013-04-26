@@ -8,11 +8,6 @@ class Estagio:
         self.InstName = str(num)+":"
         self.SinControle = ""
 
-class Instrucao:
-
-    def __init__(self):
-        self.bloqueado = False
-    
     def desbloquear(self):
         self.bloqueado = True
 
@@ -206,3 +201,23 @@ class Mips:
             self.view.lr29["text"] = str(self.r29)
             self.view.lr30["text"] = str(self.r30)
             self.view.lr31["text"] = str(self.r31)  
+
+class InstrucaoR:
+    def __init__(self, instrucao):
+        self.rs = instrucao[6:11]
+        self.rt = instrucao[11:16]
+        self.rd = instrucao[16:21]
+        self.shamt = instrucao[21:26]
+
+class InstrucaoI:
+    def __init__(self, instrucao):
+        self.rs = instrucao[6:11]
+        self.rt = instrucao[11:16]
+        self.immediate = instrucao[16:32]
+
+class InstrucaoJ:
+    def __init__(self,instrucao):
+        self.targetAddress = instrucao[6:32]
+
+
+
