@@ -11,8 +11,8 @@ class InstrucaoR:
 		self.shamt = bin(eval("0b"+instrucao[21:26]))
 
 	def decode(self):
-		self.mips.rs = self.mips.reg[eval(self.rs)]
-		self.mips.rt = self.mips.reg[eval(self.rt)]
+		self.mips.A = self.mips.reg[eval(self.rs)]
+		self.mips.B = self.mips.reg[eval(self.rt)]
 		# self.mips.rd = self.rd
 		# self.mips.shamt = self.shamt
 
@@ -20,7 +20,7 @@ class InstrucaoR:
 		pass
 
 	def writeback(self):
-		self.mips.reg[eval(self.rd)] = self.resultado
+		self.mips.reg[eval(self.rd)] = self.mips.ULA
 
 class InstrucaoI:
 	
@@ -31,9 +31,9 @@ class InstrucaoI:
 		self.immediate = bin(eval("0b"+instrucao[16:32]))	
 
 	def decode(self):
-		self.mips.rs = self.mips.reg[eval(self.rs)]
-		self.mips.rt = self.mips.reg[eval(self.rt)]
-		self.mips.immediate = self.immediate
+		self.mips.A = self.mips.reg[eval(self.rs)]
+		self.mips.B = self.mips.reg[eval(self.rt)]
+		self.mips.Imm = self.immediate
 
 class InstrucaoJ:
 	
@@ -44,21 +44,22 @@ class InstrucaoJ:
 	def decode(self):
 		self.mips.targetAddress = self.targetAddress
 
-	def memacess(self):
-		pass
-
-	def writeback(self):
-		pass
-
 class Jmp(InstrucaoJ):
 	
 	def __init__(self, mips, instrucao):
 		InstrucaoJ.__init__(self, mips, instrucao)
 
-	def execute(self):
-		# mips.pc = self.mips.targetAddress
+	def decode(self):
 		pass
 
+	def execute(self):
+		pass
+
+	def memacess(self):
+		mips.pc = self.mips.targetAddress
+
+	def writeback(self):
+		pass
 
 	def texto(self):    
 		return "jmp" + str(eval(self.targetAddress))
@@ -68,10 +69,9 @@ class Add(InstrucaoR):
 	def __init__(self, mips, instrucao):
 		InstrucaoR.__init__(self, mips, instrucao)
 
+
 	def execute(self):
-		# self.resultado = bin(eval(self.mips.reg[eval(self.mips.rs)] + eval(self.mips.reg[eval(self.mips.rt)])
-		# self.mips.reg[eval(self.mips.rd)] = bin(eval(self.mips.reg[eval(self.mips.rs)] + eval(self.mips.reg[eval(self.mips.rt)])
-		pass
+		self.mips.ULA = self.mips.A + self.mips.B
 
 	def texto(self):
 		return "add R" + str(eval(self.rd)) + ", R"+str(eval(self.rs)) + ", R" + str(eval(self.rt))
@@ -82,8 +82,7 @@ class Mul(InstrucaoR):
 		InstrucaoR.__init__(self, mips, instrucao)
 
 	def execute(self):
-		# self.mips.reg[eval(self.mips.rd)] = bin(eval(self.mips.reg[eval(self.mips.rs)])*eval(self.mips.reg[eval(self.mips.rt)]))
-		pass
+		self.mips.ULA = self.mips.A * self.mips.B
 
 	def texto(self):
 		return "mul R" + str(eval(self.rd)) + ", R"+str(eval(self.rs)) + ", R" + str(eval(self.rt))
@@ -99,6 +98,12 @@ class Nop(InstrucaoR):
 	def execute(self):
 		pass
 
+	def memacess(self):
+		pass
+
+	def writeback(self):
+		pass 
+
 	def texto(self):
 		return "nop"
 
@@ -108,8 +113,7 @@ class Sub(InstrucaoR):
 		InstrucaoR.__init__(self, mips, instrucao)
 
 	def execute(self):
-		pass
-		# self.mips.reg[eval(self.mips.rd)] = bin(eval(self.mips.reg[eval(self.mips.rs)]) - eval(self.mips.reg[eval(self.mips.rt)]))
+		self.mips.ULA = self.mips.A - self.mips.B
 
 	def texto(self):
 		return "sub R" + str(eval(self.rd)) + ", R"+str(eval(self.rs)) + ", R" + str(eval(self.rt))
@@ -120,8 +124,13 @@ class Addi(InstrucaoI):
 		InstrucaoI.__init__(self, mips, instrucao)
 
 	def execute(self):
-		# self.mips.reg[eval(self.mips.rt)] = bin(eval(self.mips.reg[eval(self.mips.rs)]) + eval(self.mips.reg[eval(self.mips.immediate)]))
+		self.mips.ULA = self.mips.A + self.mips.Imm
+
+	def memacess(self):
 		pass
+
+	def writeback(self):
+		self.mips.reg[eval(self.rt)] = self.mips.ULA
 
 	def texto(self):
 		return "addi R" + str(eval(self.rs)) + ", R"+str(eval(self.rt)) + ", " + str(eval(self.immediate))
@@ -132,9 +141,14 @@ class Beq(InstrucaoI):
 		InstrucaoI.__init__(self, mips, instrucao)
 
 	def execute(self):
+		if self.mips.reg[eval(self.mips.A)] == self.mips.reg[eval(self.mips.B)]:
+			self.mips.ULA = bin(eval(self.mips.pc) + 4 + eval(self.mips.Imm))
+
+	def memacess(self):
+		self.mips.pc = self.mips.ULA
+
+	def writeback(self):
 		pass
-		# if self.mips.reg[eval(self.mips.rs)] == self.mips.reg[eval(self.mips.rt)]:
-		# 	self.mips.pc = bin(eval(self.mips.pc) + 4 + eval(self.mips.immediate))
 
 	def texto(self):
 		return "beq R" + str(eval(self.rs)) + ", R"+str(eval(self.rt)) + ", " + str(eval(self.immediate))
