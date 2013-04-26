@@ -5,64 +5,78 @@ class InstrucaoR:
 	
 	def __init__(self, mips, instrucao):
 		self.mips = mips
-		mips.rs = bin(eval("0b"+instrucao[6:11]))
-		mips.rt = bin(eval("0b"+instrucao[11:16]))
-		mips.rd = bin(eval("0b"+instrucao[16:21]))
-		mips.shamt = bin(eval("0b"+instrucao[21:26]))
+		self.rs = bin(eval("0b"+instrucao[6:11]))
+		self.rt = bin(eval("0b"+instrucao[11:16]))
+		self.rd = bin(eval("0b"+instrucao[16:21]))
+		self.shamt = bin(eval("0b"+instrucao[21:26]))
 
 class InstrucaoI:
 	
 	def __init__(self, mips, instrucao):
 		self.mips = mips
-		mips.rs = bin(eval("0b"+instrucao[6:11]))
-		mips.rt = bin(eval("0b"+instrucao[11:16]))
-		mips.immediate = bin(eval("0b"+instrucao[16:32]))		
+		self.rs = bin(eval("0b"+instrucao[6:11]))
+		self.rt = bin(eval("0b"+instrucao[11:16]))
+		self.immediate = bin(eval("0b"+instrucao[16:32]))		
 
 class InstrucaoJ:
 	
 	def __init__(self, mips, instrucao):
 		self.mips = mips
-		mips.targetAddress = bin(eval("0b"+instrucao[6:32]))
+		self.targetAddress = bin(eval("0b"+instrucao[6:32]))
 
 class Jmp(InstrucaoJ):
 	
 	def __init__(self, mips, instrucao):
 		InstrucaoJ.__init__(self, mips, instrucao)
 
-	def execute(self, mips):
+	def decode (self):
+		mips.targetAddress = self.targetAddress
+
+	def execute(self):
 		mips.pc = bin(eval(self.mips.pc) + eval(self.mips.targetAddress)) #REVISAR acho que nao precisa reler o pc
 
 	def texto(self):    
-		return "jmp" + str(eval(self.mips.targetAddress))
+		return "jmp" + str(eval(self.targetAddress))
 
 class Add(InstrucaoR):
 	
 	def __init__(self, mips, instrucao):
 		InstrucaoR.__init__(self, mips, instrucao)
 
-	def execute(self, mips):
+	def decode(self):
+		self.mips.rs = self.rs
+		self.mips.rt = self.rt
+
+	def execute(self):
 		self.mips.rd = bin(eval(self.mips.rs) + eval(self.mips.rt))
 
 	def texto(self):
-		return "add R" + str(eval(self.mips.rd)) + ", R"+str(eval(self.mips.rs)) + ", R" + str(eval(self.mips.rt))
+		return "add R" + str(eval(self.rd)) + ", R"+str(eval(self.rs)) + ", R" + str(eval(self.rt))
 
 class Mul(InstrucaoR):
 	
 	def __init__(self, mips, instrucao):
 		InstrucaoR.__init__(self, mips, instrucao)
 
-	def execute(self, mips):
+	def decode(self):
+		self.mips.rs = self.rs
+		self.mips.rt = self.rt
+
+	def execute(self):
 		self.mips.rd = bin(eval(self.mips.rs)*eval(self.mips.rt))
 
 	def texto(self):
-		return "mul R" + str(eval(self.mips.rd)) + ", R"+str(eval(self.mips.rs)) + ", R" + str(eval(self.mips.rt))
+		return "mul R" + str(eval(self.rd)) + ", R"+str(eval(self.rs)) + ", R" + str(eval(self.rt))
 
 class Nop(InstrucaoR):
 	
 	def __init__(self, mips, instrucao):
 		InstrucaoR.__init__(self, mips, instrucao)
 
-	def execute(self, mips):
+	def decode(self):
+		pass
+
+	def execute(self):
 		pass
 
 	def texto(self):
@@ -73,80 +87,113 @@ class Sub(InstrucaoR):
 	def __init__(self, mips, instrucao):
 		InstrucaoR.__init__(self, mips, instrucao)
 
-	def execute(self, mips):
+	def decode(self):
+		self.mips.rs = self.rs
+		self.mips.rt = self.rt
+
+	def execute(self):
 		self.mips.rd = bin(eval(self.mips.rs) - eval(self.mips.rt))
 
 	def texto(self):
-		return "sub R" + str(eval(self.mips.rd)) + ", R"+str(eval(self.mips.rs)) + ", R" + str(eval(self.mips.rt))
+		return "sub R" + str(eval(self.rd)) + ", R"+str(eval(self.rs)) + ", R" + str(eval(self.rt))
 
 class Addi(InstrucaoI):
 
 	def __init__(self, mips, instrucao):
 		InstrucaoI.__init__(self, mips, instrucao)
 
-	def execute(self, mips):
-		mips.rt = bin(eval(mips.rs) + eval(mips.immediate))
+	def decode(self):
+		self.mips.rs = self.rs
+		self.mips.immediate = self.immediate
+
+	def execute(self):
+		self.mips.rt = bin(eval(self.mips.rs) + eval(self.mips.immediate))
 
 	def texto(self):
-		return "addi R" + str(eval(self.mips.rs)) + ", R"+str(eval(self.mips.rt)) + ", " + str(eval(self.mips.immediate))
+		return "addi R" + str(eval(self.rs)) + ", R"+str(eval(self.rt)) + ", " + str(eval(self.immediate))
 
 class Beq(InstrucaoI):
 
 	def __init__(self, mips, instrucao):
 		InstrucaoI.__init__(self, mips, instrucao)
 
-	def execute(self, mips):
+	def decode(self):
+		self.mips.rs = self.rs
+		self.mips.rt = self.rt
+		self.mips.immediate = self.immediate
+
+	def execute(self):
 		if self.mips.rs == self.mips.rt:
 			self.mips.pc = bin(eval(self.mips.pc) + 4 + eval(self.mips.immediate))
 
 	def texto(self):
-		return "beq R" + str(eval(self.mips.rs)) + ", R"+str(eval(self.mips.rt)) + ", " + str(eval(self.mips.immediate))
+		return "beq R" + str(eval(self.rs)) + ", R"+str(eval(self.rt)) + ", " + str(eval(self.immediate))
 
 class Ble(InstrucaoI):
 
 	def __init__(self, mips, instrucao):
 		InstrucaoI.__init__(self, mips, instrucao)
 
-	def execute(self, mips):
+	def decode(self):
+		self.mips.rs = self.rs
+		self.mips.rt = self.rt
+		self.mips.immediate = self.immediate
+
+	def execute(self):
 		if self.mips.rs <= self.mips.rt:
 			self.mips.pc = bin(eval(self.mips.immediate))      
 
 	def texto(self):
-		return "ble R" + str(eval(self.mips.rs)) + ", R"+str(eval(self.mips.rt)) + ", " + str(eval(self.mips.immediate))  
+		return "ble R" + str(eval(self.rs)) + ", R"+str(eval(self.rt)) + ", " + str(eval(self.immediate))  
 
 class Bne(InstrucaoI):
 
 	def __init__(self, mips, instrucao):
 		InstrucaoI.__init__(self, mips, instrucao)
 
-	def execute(self, mips):
+	def decode(self):
+		self.mips.rs = self.rs
+		self.mips.rt = self.rt
+		self.mips.immediate = self.immediate
+
+	def execute(self):
 		if self.mips.rs != self.mips.rt:
 			self.mips.pc = bin(eval(self.mips.pc) + 4 + eval(self.mips.immediate))
 
 	def texto(self):
-		return "bne R" + str(eval(self.mips.rs)) + ", R"+str(eval(self.mips.rt)) + ", " + str(eval(self.mips.immediate))
+		return "bne R" + str(eval(self.rs)) + ", R"+str(eval(self.rt)) + ", " + str(eval(self.immediate))
 
 class Lw(InstrucaoI):
 
 	def __init__(self, mips, instrucao):
 		InstrucaoI.__init__(self, mips, instrucao)
 
+	def decode(self):
+		self.mips.rs = self.rs
+		self.mips.rt = self.rt
+		self.mips.immediate = self.immediate
+
 	def execute(self, mips):
 		pass
 
 	def texto(self):
-		return "lw R" + str(eval(self.mips.rs)) + ", "+str(eval(self.mips.immediate))+"("+str(eval(self.mips.rt)) + ")"
+		return "lw R" + str(eval(self.rs)) + ", "+str(eval(self.immediate))+"("+str(eval(self.rt)) + ")"
 
 class Sw(InstrucaoI):
 
 	def __init__(self, mips, instrucao):
 		InstrucaoI.__init__(self, mips, instrucao)
 
-	def execute(self, mips):
+	def decode(self):
+		self.mips.rs = self.rs
+		self.mips.immediate = self.immediate
+		self.mips.rt = self.rt
+
+	def execute(self):
 		pass
 
 	def texto(self):
-		return "sw R" + str(eval(self.mips.rs)) + ", "+str(eval(self.mips.immediate))+"("+str(eval(self.mips.rt)) + ")"
+		return "sw R" + str(eval(self.rs)) + ", "+str(eval(self.immediate))+"("+str(eval(self.rt)) + ")"
 
 class Estagio:
 	def __init__(self, num, mips):
@@ -213,7 +260,7 @@ class InstructionDecodeRegisterFetch(Estagio):
 		return instrucaoDecodificada
 
 	def do(self):
-		self.instrucao = self.decodInst(instrucao)
+		self.instrucao.decode()
 		return self.instrucao
 
 class InstructionExecute(Estagio):
@@ -221,8 +268,8 @@ class InstructionExecute(Estagio):
 	def __init__(self, num, mips):
 		Estagio.__init__(self, num, mips)
 
-	def do(self, instrucaoDecodificada):
-		instrucaoDecodificada.execute(self.mips)
+	def do(self):
+		self.instrucao.execute()
 
 class Mips:
 	def __init__(self):
@@ -306,13 +353,17 @@ class Mips:
 		if not self.E5.bloqueado:
 			if not self.E4.bloqueado:
 				self.E5.setInstrucao(self.E4.instrucao)
+				self.E5.do()
 				if not self.E3.bloqueado:
 					self.E4.setInstrucao(self.E3.instrucao)
+					self.E4.do()
 					if not self.E2.bloqueado:
 						self.E3.setInstrucao(self.E2.instrucao)
+						self.E3.do()
 						if not self.E1.bloqueado:
 							self.E2.setInstrucao(self.E1.instrucao)
-							self.pc = bin(eval(self.pc) + 4)
+							self.E2.do()
+							self.pc = bin(eval(self.pc) + 4)							
 						else:
 							self.E2.setNop()
 							self.E1.desbloquear()
