@@ -4,6 +4,7 @@ import tkFileDialog
 import tkFont
 from threading import Thread
 from filereader import FileReader
+import os
 
 class geradorDeClock(Thread):
     def __init__(self, metodo):
@@ -64,7 +65,7 @@ class Application(Frame):
         print "Play!"
         # Para agilizar a execucao - Remover depois
         # self.FileName["text"] = "C:/Users/vsmon_000/Documents/code/mips/mips/instructions/program_addi.txt"
-        self.FileName["text"] = "C:/Users/vsmon_000/Documents/code/mips/mips/instructions/program.txt"
+        self.FileName["text"] = os.getcwd()+"/instructions/program.txt"
         self.mips.read(self.FileName["text"])
 
         if self.pendulo == None:
