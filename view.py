@@ -62,6 +62,10 @@ class Application(Frame):
 
     def play(self):
         print "Play!"
+        # Para agilizar a execucao - Remover depois
+        self.FileName["text"] = "C:/Users/vsmon_000/Documents/code/mips/mips/instructions/program_addi.txt"
+        self.mips.read(self.FileName["text"])
+
         if self.pendulo == None:
             self.pendulo = geradorDeClock(self.next)
             self.pendulo.start()
