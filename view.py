@@ -64,7 +64,8 @@ class Application(Frame):
         print "Play!"
         # Para agilizar a execucao - Remover depois
         # self.FileName["text"] = "C:/Users/vsmon_000/Documents/code/mips/mips/instructions/program_addi.txt"
-        self.FileName["text"] = "C:/Users/vsmon_000/Documents/code/mips/mips/instructions/program.txt"
+        import os
+        self.FileName["text"] = os.getcwd().replace("\\","/")+"/instructions/program.txt"
         self.mips.read(self.FileName["text"])
 
         if self.pendulo == None:
