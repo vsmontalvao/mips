@@ -8,6 +8,19 @@ class Estagio:
         self.InstName = str(num)+":"
         self.SinControle = ""
 
+class Instrucao:
+
+    def __init__(self):
+        self.bloqueado = False
+    
+    def desbloquear(self):
+        self.bloqueado = True
+
+    def bloquear(self):
+        self.bloqueado = False
+
+    def getStatusBloqueado(self):
+        return self.bloqueado
 
 class Mips:
     def __init__(self):
