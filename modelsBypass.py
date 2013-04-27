@@ -34,25 +34,23 @@ class InstrucaoR(Instrucao):
 		self.temLocalDestino = True
 
 	def decode(self):
-		if self.mips.reg[eval(self.rs)].bloqueado | self.mips.reg[eval(self.rt)].bloqueado:
-			if (not self.mips.reg[eval(self.rs)].resultadoDisponivel) | (not self.mips.reg[eval(self.rt)].resultadoDisponivel):
+		if self.mips.reg[eval(self.rs)].bloqueado & (not self.mips.reg[eval(self.rs)].resultadoDisponivel):
+				self.mips.E2.esperarClock()
+		else:
+			if self.mips.reg[eval(self.rs)].resultadoDisponivel:
+				self.mips.A = self.mips.reg[eval(self.rs)].proxResultado
+			else:
+				self.mips.A = self.mips.reg[eval(self.rs)].valor
+
+			if self.mips.reg[eval(self.rt)].bloqueado & (not self.mips.reg[eval(self.rt)].resultadoDisponivel):
 				self.mips.E2.esperarClock()
 			else:
-				if self.mips.reg[eval(self.rs)].resultadoDisponivel:
-					self.mips.A = self.mips.reg[eval(self.rs)].proxResultado
-				else:
-					self.mips.A = self.mips.reg[eval(self.rs)].valor
+				self.mips.shamt = self.shamt
 				if self.mips.reg[eval(self.rt)].resultadoDisponivel:
 					self.mips.B = self.mips.reg[eval(self.rt)].proxResultado
 				else:
 					self.mips.B = self.mips.reg[eval(self.rt)].valor
 				self.mips.reg[eval(self.rd)].bloquear()
-				self.mips.shamt = self.shamt
-		else:
-			self.mips.A = self.mips.reg[eval(self.rs)].valor
-			self.mips.B = self.mips.reg[eval(self.rt)].valor
-			self.mips.reg[eval(self.rd)].bloquear()
-			self.mips.shamt = self.shamt
 
 	def writeback(self):
 		self.mips.reg[eval(self.rd)].valor = self.mips.ULA
@@ -104,6 +102,7 @@ class Add(InstrucaoR):
 		self.mips.ULA = bin(eval(self.mips.A) + eval(self.mips.B))
 		self.mips.reg[eval(self.rd)].proxResultado = self.mips.ULA
 		self.mips.reg[eval(self.rd)].resultadoDisponivel = True
+		self.mips.delIndisponivel(self.mips.reg[eval(self.rd)])
 
 	def texto(self):
 		return "add R" + str(eval(self.rd)) + ", R"+str(eval(self.rs)) + ", R" + str(eval(self.rt))
@@ -118,6 +117,7 @@ class Mul(InstrucaoR):
 		self.mips.ULA = bin(eval(self.mips.A) * eval(self.mips.B))
 		self.mips.reg[eval(self.rd)].proxResultado = self.mips.ULA
 		self.mips.reg[eval(self.rd)].resultadoDisponivel = True
+		self.mips.delIndisponivel(self.mips.reg[eval(self.rd)])
 
 	def texto(self):
 		return "mul R" + str(eval(self.rd)) + ", R"+str(eval(self.rs)) + ", R" + str(eval(self.rt))
@@ -152,6 +152,7 @@ class Sub(InstrucaoR):
 		self.mips.ULA = bin(eval(self.mips.A) - eval(self.mips.B))
 		self.mips.reg[eval(self.rd)].proxResultado = self.mips.ULA
 		self.mips.reg[eval(self.rd)].resultadoDisponivel = True
+		self.mips.delIndisponivel(self.mips.reg[eval(self.rd)])
 
 	def texto(self):
 		return "sub R" + str(eval(self.rd)) + ", R"+str(eval(self.rs)) + ", R" + str(eval(self.rt))
@@ -182,6 +183,7 @@ class Addi(InstrucaoI):
 		self.mips.ULA = bin(eval(self.mips.A) + eval(self.mips.Imm))
 		self.mips.reg[eval(self.rt)].proxResultado = self.mips.ULA
 		self.mips.reg[eval(self.rt)].resultadoDisponivel = True
+		self.mips.delIndisponivel(self.mips.reg[eval(self.rt)])
 
 	def writeback(self):
 		self.mips.reg[eval(self.rt)].valor = self.mips.ULA
@@ -199,25 +201,23 @@ class Beq(InstrucaoI):
 		InstrucaoI.__init__(self, mips, instrucao)
 
 	def decode(self):
-		if self.mips.reg[eval(self.rs)].bloqueado | self.mips.reg[eval(self.rt)].bloqueado:
-			if (not self.mips.reg[eval(self.rs)].resultadoDisponivel) | (not self.mips.reg[eval(self.rt)].resultadoDisponivel):
+		if self.mips.reg[eval(self.rs)].bloqueado & (not self.mips.reg[eval(self.rs)].resultadoDisponivel):
+				self.mips.E2.esperarClock()
+		else:
+			if self.mips.reg[eval(self.rs)].resultadoDisponivel:
+				self.mips.A = self.mips.reg[eval(self.rs)].proxResultado
+			else:
+				self.mips.A = self.mips.reg[eval(self.rs)].valor
+
+			if self.mips.reg[eval(self.rt)].bloqueado & (not self.mips.reg[eval(self.rt)].resultadoDisponivel):
 				self.mips.E2.esperarClock()
 			else:
-				if self.mips.reg[eval(self.rs)].resultadoDisponivel:
-					self.mips.A = self.mips.reg[eval(self.rs)].proxResultado
-				else:
-					self.mips.A = self.mips.reg[eval(self.rs)].valor
+				self.mips.Imm = self.immediate
 				if self.mips.reg[eval(self.rt)].resultadoDisponivel:
 					self.mips.B = self.mips.reg[eval(self.rt)].proxResultado
 				else:
 					self.mips.B = self.mips.reg[eval(self.rt)].valor
-				self.mips.Imm = self.immediate
 				self.mips.E1.bloquear()
-		else:
-			self.mips.A = self.mips.reg[eval(self.rs)].valor
-			self.mips.B = self.mips.reg[eval(self.rt)].valor
-			self.mips.Imm = self.immediate
-			self.mips.E1.bloquear()
 
 	def execute(self):
 		self.equal = False
@@ -245,25 +245,23 @@ class Ble(InstrucaoI):
 		InstrucaoI.__init__(self, mips, instrucao)
 
 	def decode(self):
-		if self.mips.reg[eval(self.rs)].bloqueado | self.mips.reg[eval(self.rt)].bloqueado:
-			if (not self.mips.reg[eval(self.rs)].resultadoDisponivel) | (not self.mips.reg[eval(self.rt)].resultadoDisponivel):
+		if self.mips.reg[eval(self.rs)].bloqueado & (not self.mips.reg[eval(self.rs)].resultadoDisponivel):
+				self.mips.E2.esperarClock()
+		else:
+			if self.mips.reg[eval(self.rs)].resultadoDisponivel:
+				self.mips.A = self.mips.reg[eval(self.rs)].proxResultado
+			else:
+				self.mips.A = self.mips.reg[eval(self.rs)].valor
+
+			if self.mips.reg[eval(self.rt)].bloqueado & (not self.mips.reg[eval(self.rt)].resultadoDisponivel):
 				self.mips.E2.esperarClock()
 			else:
-				if self.mips.reg[eval(self.rs)].resultadoDisponivel:
-					self.mips.A = self.mips.reg[eval(self.rs)].proxResultado
-				else:
-					self.mips.A = self.mips.reg[eval(self.rs)].valor
+				self.mips.Imm = self.immediate
 				if self.mips.reg[eval(self.rt)].resultadoDisponivel:
 					self.mips.B = self.mips.reg[eval(self.rt)].proxResultado
 				else:
 					self.mips.B = self.mips.reg[eval(self.rt)].valor
-				self.mips.Imm = self.immediate
 				self.mips.E1.bloquear()
-		else:
-			self.mips.A = self.mips.reg[eval(self.rs)].valor
-			self.mips.B = self.mips.reg[eval(self.rt)].valor
-			self.mips.Imm = self.immediate
-			self.mips.E1.bloquear()
 
 	def execute(self):
 		self.equal = False
@@ -291,25 +289,23 @@ class Bne(InstrucaoI):
 		InstrucaoI.__init__(self, mips, instrucao)
 
 	def decode(self):
-		if self.mips.reg[eval(self.rs)].bloqueado | self.mips.reg[eval(self.rt)].bloqueado:
-			if (not self.mips.reg[eval(self.rs)].resultadoDisponivel) | (not self.mips.reg[eval(self.rt)].resultadoDisponivel):
+		if self.mips.reg[eval(self.rs)].bloqueado & (not self.mips.reg[eval(self.rs)].resultadoDisponivel):
+				self.mips.E2.esperarClock()
+		else:
+			if self.mips.reg[eval(self.rs)].resultadoDisponivel:
+				self.mips.A = self.mips.reg[eval(self.rs)].proxResultado
+			else:
+				self.mips.A = self.mips.reg[eval(self.rs)].valor
+
+			if self.mips.reg[eval(self.rt)].bloqueado & (not self.mips.reg[eval(self.rt)].resultadoDisponivel):
 				self.mips.E2.esperarClock()
 			else:
-				if self.mips.reg[eval(self.rs)].resultadoDisponivel:
-					self.mips.A = self.mips.reg[eval(self.rs)].proxResultado
-				else:
-					self.mips.A = self.mips.reg[eval(self.rs)].valor
+				self.mips.Imm = self.immediate
 				if self.mips.reg[eval(self.rt)].resultadoDisponivel:
 					self.mips.B = self.mips.reg[eval(self.rt)].proxResultado
 				else:
 					self.mips.B = self.mips.reg[eval(self.rt)].valor
-				self.mips.Imm = self.immediate
 				self.mips.E1.bloquear()
-		else:
-			self.mips.A = self.mips.reg[eval(self.rs)].valor
-			self.mips.B = self.mips.reg[eval(self.rt)].valor
-			self.mips.Imm = self.immediate
-			self.mips.E1.bloquear()
 
 	def execute(self):
 		self.equal = False
@@ -363,11 +359,13 @@ class Lw(InstrucaoI):
 				self.mips.addListaMemoria(self.destino)
 				self.mips.reg[eval(self.rt)].proxResultado = self.resultado
 				self.mips.reg[eval(self.rt)].resultadoDisponivel = True
+				self.mips.delIndisponivel(self.mips.reg[eval(self.rt)])
 		else:
 			self.resultado = self.mips.mem[self.destino].valor
 			self.mips.addListaMemoria(self.destino)
 			self.mips.reg[eval(self.rt)].proxResultado = self.resultado
 			self.mips.reg[eval(self.rt)].resultadoDisponivel = True
+			self.mips.delIndisponivel(self.mips.reg[eval(self.rt)])
 
 	def writeback(self):
 		self.mips.reg[eval(self.rt)].valor = self.resultado
@@ -385,29 +383,26 @@ class Sw(InstrucaoI):
 		self.temLocalDestino = True
 
 	def decode(self):	
-		if self.mips.reg[eval(self.rs)].bloqueado | self.mips.reg[eval(self.rt)].bloqueado:
-			if (not self.mips.reg[eval(self.rs)].resultadoDisponivel) | (not self.mips.reg[eval(self.rt)].resultadoDisponivel):
+		if self.mips.reg[eval(self.rs)].bloqueado & (not self.mips.reg[eval(self.rs)].resultadoDisponivel):
+				self.mips.E2.esperarClock()
+		else:
+			if self.mips.reg[eval(self.rs)].resultadoDisponivel:
+				self.destino = 	eval(self.mips.reg[eval(self.rs)].proxResultado) + eval(self.mips.Imm)
+			else:
+				self.destino = 	eval(self.mips.reg[eval(self.rs)].valor) + eval(self.mips.Imm)
+
+			if self.mips.reg[eval(self.rt)].bloqueado & (not self.mips.reg[eval(self.rt)].resultadoDisponivel):
 				self.mips.E2.esperarClock()
 			else:
 				self.mips.Imm = self.immediate
-				if self.mips.reg[eval(self.rs)].resultadoDisponivel:
-					self.destino = 	eval(self.mips.reg[eval(self.rs)].proxResultado) + eval(self.mips.Imm)
-				else:
-					self.destino = 	eval(self.mips.reg[eval(self.rs)].valor) + eval(self.mips.Imm)
 				if self.mips.reg[eval(self.rt)].resultadoDisponivel:
 					self.resultado = self.mips.reg[eval(self.rt)].proxResultado
 				else:
 					self.resultado = self.mips.reg[eval(self.rt)].valor
 				self.mips.mem[self.destino].proxResultado = self.resultado
 				self.mips.mem[self.destino].resultadoDisponivel = True
+				self.mips.delIndisponivel(self.mips.mem[self.destino])
 				self.mips.mem[self.destino].bloquear()
-		else:
-			self.mips.Imm = self.immediate
-			self.destino = 	eval(self.mips.reg[eval(self.rs)].valor) + eval(self.mips.Imm)
-			self.resultado = self.mips.reg[eval(self.rt)].valor
-			self.mips.mem[self.destino].proxResultado = self.resultado
-			self.mips.mem[self.destino].resultadoDisponivel = True
-			self.mips.mem[self.destino].bloquear()
 
 	def memaccess(self):
 		self.mips.mem[self.destino].valor = self.resultado
@@ -555,6 +550,13 @@ class Mips:
 
 	def addIndisponivel(self, destino):
 		self.listaDeIndisponibilidade.append(destino)
+
+	def delIndisponivel(self, reg):
+		cont = -1
+		for i in self.listaDeIndisponibilidade:
+			cont = cont + 1
+			if i == reg:
+				del self.listaDeIndisponibilidade[cont]
 
 	def ClockDesbloquear(self):
 		for i in self.listaDeDesbloqueio:
