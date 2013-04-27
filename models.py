@@ -1,6 +1,17 @@
 print "MODELS"
 from filereader import FileReader
 
+class Registrador:
+	def __init__(self):
+		self.valor = 0
+		self.bloqueado = False
+
+	def bloquear(self):
+		self.bloqueado = True
+
+	def desbloquear(self):
+		self.bloqueado = False
+
 class InstrucaoR:
 	def __init__(self, mips, instrucao):
 		self.mips = mips
@@ -10,16 +21,22 @@ class InstrucaoR:
 		self.shamt = bin(eval("0b"+instrucao[21:26]))
 
 	def decode(self):
-		self.mips.A = self.mips.reg[eval(self.rs)]
-		self.mips.B = self.mips.reg[eval(self.rt)]
-		# self.mips.rd = self.rd
-		# self.mips.shamt = self.shamt
+		if self.mips.reg[eval(self.rs)].bloqueado | self.mips.reg[eval(self.rt)].bloqueado:
+			self.mips.E2.bloquear()
+		else:
+			self.mips.A = self.mips.reg[eval(self.rs)].valor
+			self.mips.B = self.mips.reg[eval(self.rt)].valor
+			self.mips.reg[eval(self.rd)].bloquear()
+			self.mips.shamt = self.shamt
 
 	def memaccess(self):
 		pass
 
 	def writeback(self):
-		self.mips.reg[eval(self.rd)] = self.mips.ULA
+		self.mips.reg[eval(self.rd)].valor = self.mips.ULA
+		self.mips.reg[eval(self.rd)].desbloquear()
+		if self.mips.E2.bloqueado:
+			self.mips.E2.desbloquear()
 
 class InstrucaoI:
 	
@@ -30,9 +47,12 @@ class InstrucaoI:
 		self.immediate = bin(eval("0b"+instrucao[16:32]))	
 
 	def decode(self):
-		self.mips.A = self.mips.reg[eval(self.rs)]
-		self.mips.B = self.mips.reg[eval(self.rt)]
-		self.mips.Imm = self.immediate
+		if self.mips.reg[eval(self.rs)].bloqueado | self.mips.reg[eval(self.rt)].bloqueado:
+			self.mips.E2.bloquear()
+		else:
+			self.mips.A = self.mips.reg[eval(self.rs)].valor
+			self.mips.B = self.mips.reg[eval(self.rt)].valor
+			self.mips.Imm = self.immediate
 
 class InstrucaoJ:
 	
@@ -40,22 +60,21 @@ class InstrucaoJ:
 		self.mips = mips
 		self.targetAddress = bin(eval("0b"+instrucao[6:32]))
 
-	def decode(self):
-		self.mips.targetAddress = self.targetAddress
-
 class Jmp(InstrucaoJ):
 	
 	def __init__(self, mips, instrucao):
 		InstrucaoJ.__init__(self, mips, instrucao)
 
 	def decode(self):
-		pass
+		mips.E1.bloquear()
+		mips.E1.avancapc = False
 
 	def execute(self):
 		pass
 
 	def memaccess(self):
-		mips.pc = self.mips.targetAddress
+		mips.pc = self.targetAddress
+		mips.E1.desbloquear()
 
 	def writeback(self):
 		pass
@@ -68,9 +87,8 @@ class Add(InstrucaoR):
 	def __init__(self, mips, instrucao):
 		InstrucaoR.__init__(self, mips, instrucao)
 
-
 	def execute(self):
-		self.mips.ULA = self.mips.A + self.mips.B
+		self.mips.ULA = bin(self.mips.A + self.mips.B)
 
 	def texto(self):
 		return "add R" + str(eval(self.rd)) + ", R"+str(eval(self.rs)) + ", R" + str(eval(self.rt))
@@ -81,7 +99,7 @@ class Mul(InstrucaoR):
 		InstrucaoR.__init__(self, mips, instrucao)
 
 	def execute(self):
-		self.mips.ULA = self.mips.A * self.mips.B
+		self.mips.ULA = bin(self.mips.A * self.mips.B)
 
 	def texto(self):
 		return "mul R" + str(eval(self.rd)) + ", R"+str(eval(self.rs)) + ", R" + str(eval(self.rt))
@@ -112,7 +130,7 @@ class Sub(InstrucaoR):
 		InstrucaoR.__init__(self, mips, instrucao)
 
 	def execute(self):
-		self.mips.ULA = self.mips.A - self.mips.B
+		self.mips.ULA = bin(self.mips.A - self.mips.B)
 
 	def texto(self):
 		return "sub R" + str(eval(self.rd)) + ", R"+str(eval(self.rs)) + ", R" + str(eval(self.rt))
@@ -122,14 +140,19 @@ class Addi(InstrucaoI):
 	def __init__(self, mips, instrucao):
 		InstrucaoI.__init__(self, mips, instrucao)
 
+	def decode(self):
+		InstrucaoI.decode()
+		self.mips.reg[eval(self.rt)].bloquear()
+
 	def execute(self):
-		self.mips.ULA = self.mips.A + self.mips.Imm
+		self.mips.ULA = bin(self.mips.A + self.mips.Imm)
 
 	def memaccess(self):
 		pass
 
 	def writeback(self):
-		self.mips.reg[eval(self.rt)] = self.mips.ULA
+		self.mips.reg[eval(self.rt)].valor = self.mips.ULA
+		self.mips.reg[eval(self.rt)].desbloquear()
 
 	def texto(self):
 		return "addi R" + str(eval(self.rs)) + ", R"+str(eval(self.rt)) + ", " + str(eval(self.immediate))
@@ -139,12 +162,23 @@ class Beq(InstrucaoI):
 	def __init__(self, mips, instrucao):
 		InstrucaoI.__init__(self, mips, instrucao)
 
+	def decode(self):
+		mips.E1.bloquear()
+		InstrucaoI.decode()
+
 	def execute(self):
-		if self.mips.reg[eval(self.mips.A)] == self.mips.reg[eval(self.mips.B)]:
+		self.equal = False
+		if eval(self.mips.reg[eval(self.mips.A)].valor) == eval(self.mips.reg[eval(self.mips.B)].valor):
+			self.equal = True
 			self.mips.ULA = bin(eval(self.mips.pc) + 4 + eval(self.mips.Imm))
 
-	def memaccess(self):
-		self.mips.pc = self.mips.ULA
+	def memacess(self):
+		if self.equal == True:
+			self.mips.pc = self.mips.ULA
+			mips.E1.avancapc = False
+		else:
+			mips.E1.avancapc = True
+		mips.E1.desbloquear()
 
 	def writeback(self):
 		pass
@@ -157,10 +191,26 @@ class Ble(InstrucaoI):
 	def __init__(self, mips, instrucao):
 		InstrucaoI.__init__(self, mips, instrucao)
 
+	def decode(self):
+		mips.E1.bloquear()
+		InstrucaoI.decode()
+
 	def execute(self):
+		self.equal = False
+		if eval(self.mips.reg[eval(self.mips.A)].valor) <= eval(self.mips.reg[eval(self.mips.B)].valor):
+			self.equal = True
+			self.mips.ULA = bin(eval(self.mips.Imm))      
+
+	def memacess(self):
+		if self.equal == True:
+			self.mips.pc = self.mips.ULA
+			mips.E1.avancapc = False
+		else:
+			mips.E1.avancapc = True
+		mips.E1.desbloquear()
+
+	def writeback(self):
 		pass
-		# if self.mips.reg[eval(self.mips.rs)] <= self.mips.reg[eval(self.mips.rt)]:
-		# 	self.mips.pc = bin(eval(self.mips.immediate))      
 
 	def texto(self):
 		return "ble R" + str(eval(self.rs)) + ", R"+str(eval(self.rt)) + ", " + str(eval(self.immediate))  
@@ -170,10 +220,26 @@ class Bne(InstrucaoI):
 	def __init__(self, mips, instrucao):
 		InstrucaoI.__init__(self, mips, instrucao)
 
+	def decode(self):
+		mips.E1.bloquear()
+		InstrucaoI.decode()
+
 	def execute(self):
+		self.equal = False
+		if eval(self.mips.reg[eval(self.mips.A)].valor) != eval(self.mips.reg[eval(self.mips.B)].valor):
+			self.equal = True
+			self.mips.pc = bin(eval(self.mips.pc) + 4 + eval(self.mips.Imm))
+
+	def memacess(self):
+		if self.equal == True:
+			self.mips.pc = self.mips.ULA
+			mips.E1.avancapc = False
+		else:
+			mips.E1.avancapc = True
+		mips.E1.desbloquear()
+
+	def writeback(self):
 		pass
-		# if self.mips.reg[eval(self.mips.rs)] != self.mips.reg[eval(self.mips.rt)]:
-		# 	self.mips.pc = bin(eval(self.mips.pc) + 4 + eval(self.mips.immediate))
 
 	def texto(self):
 		return "bne R" + str(eval(self.rs)) + ", R"+str(eval(self.rt)) + ", " + str(eval(self.immediate))
@@ -183,19 +249,43 @@ class Lw(InstrucaoI):
 	def __init__(self, mips, instrucao):
 		InstrucaoI.__init__(self, mips, instrucao)
 
+	def decode(self):
+		InstrucaoI.decode()
+		if self.mips.reg[eval(self.rt)].bloqueado:
+			self.mips.E2.bloquear()
+		else:
+			self.mips.reg[eval(self.rt)].bloquear()
+			self.resultado = self.mips.mem[eval(self.mips.reg[eval(self.rs)]) + self.mips.Imm]
+
 	def execute(self):
 		pass
 
+	def writeback(self):
+		self.mips.reg[eval(self.rt)].valor = self.resultado
+		self.mips.reg[eval(self.rt)].desbloquear()
+
 	def texto(self):
 		return "lw R" + str(eval(self.rs)) + ", "+str(eval(self.immediate))+"("+str(eval(self.rt)) + ")"
-
 class Sw(InstrucaoI):
 
 	def __init__(self, mips, instrucao):
 		InstrucaoI.__init__(self, mips, instrucao)
 
+	def decode(self):	
+		InstrucaoI.decode()
+		self.destino = 	self.mips.reg[eval(self.rs)] + self.mips.Imm
+		if self.mips.mem[self.destino].bloqueado:
+			self.mips.E2.bloquear()
+		else:
+			self.mips.mem[self.destino].bloquear()
+			self.resultado = self.mips.reg[eval(self.rt)]
+
 	def execute(self):
 		pass
+
+	def memaccess(self):
+		self.mips.mem[self.destino].valor = self.resultado
+		self.mips.mem[self.destino].desbloquear()
 
 	def texto(self):
 		return "sw R" + str(eval(self.rs)) + ", "+str(eval(self.immediate))+"("+str(eval(self.rt)) + ")"
@@ -208,6 +298,7 @@ class Estagio:
 		self.bloqueado = False
 		self.setNop()
 		self.saida = 0
+		self.passarInstrucao = True
 
 	def desbloquear(self):
 		self.bloqueado = False
@@ -228,7 +319,10 @@ class InstructionFetch(Estagio):
 		Estagio.__init__(self, num,  mips)
 
 	def do(self, i):
-		return self.mips.fr.getInst(i)[0:32]
+		self.bloquear()
+		inst = self.mips.fr.getInst(i)[0:32]
+		self.desbloquear()
+		return inst
 
 class InstructionDecodeRegisterFetch(Estagio):
 
@@ -272,10 +366,10 @@ class InstructionDecodeRegisterFetch(Estagio):
 		return self.instrucao
 
 class InstructionExecute(Estagio):
-	self.cont = 0
 	
 	def __init__(self, num, mips):
 		Estagio.__init__(self, num, mips)
+		self.cont = 0
 
 	def do(self):
 		self.bloquear()
@@ -310,11 +404,18 @@ class Mips:
 	def __init__(self):
 		self.inicio()
 		self.fr = FileReader()   
-		self.mem = [0] * 2**15 # vc pode checar o tamanho com len(self.mem) e acessar cada posicao
+		self.mem = [Registrador()] * 2**15 # vc pode checar o tamanho com len(self.mem) e acessar cada posicao
 							   # independentemente com self.mips.mem[i] dai para manipular os 32 bits podemos
 							   # mexer com os valores binarios e decimais
-		self.reg = [0] * 2**5
+		self.reg = [Registrador()] * 2**5
+		self.ULAbloqueada = False
+		self.avancapc = False
 
+	def bloquearULA():
+		self.ULAbloqueada = True
+
+	def desbloquearULA():
+		self.ULAbloqueada = False
 
 	def read(self, filePath):
 		self.fr.read(filePath)
@@ -337,7 +438,6 @@ class Mips:
 		self.E4.setNop()
 		self.E5.setNop()
 
-
 		self.end1 = None
 		self.val1 = None
 		self.end2 = None
@@ -346,39 +446,6 @@ class Mips:
 		self.val3 = None
 		self.end4 = None
 		self.val4 = None
-
-		self.r0 = 0
-		self.r1 = 0
-		self.r2 = 0
-		self.r3 = 0
-		self.r4 = 0
-		self.r5 = 0
-		self.r6 = 0
-		self.r7 = 0
-		self.r8 = 0
-		self.r9 = 0
-		self.r10 = 0
-		self.r11 = 0
-		self.r12 = 0
-		self.r13 = 0
-		self.r14 = 0
-		self.r15 = 0
-		self.r16 = 0
-		self.r17 = 0
-		self.r18 = 0
-		self.r19 = 0
-		self.r20 = 0
-		self.r21 = 0
-		self.r22 = 0
-		self.r23 = 0
-		self.r24 = 0
-		self.r25 = 0
-		self.r26 = 0
-		self.r27 = 0
-		self.r28 = 0
-		self.r29 = 0
-		self.r30 = 0
-		self.r31 = 0
 
 	def setView(self, view):
 		self.view = view
@@ -393,23 +460,26 @@ class Mips:
 		self.clock = self.clock + 1
 
 		if not self.E5.bloqueado:
-			if not self.E4.bloqueado:
+			if not self.E4.bloqueado & self.E4.passarInstrucao:
 				self.E5.setInstrucao(self.E4.instrucao)
 				self.E5.do()
-				if not self.E3.bloqueado:
+				if not self.E3.bloqueado & self.E3.passarInstrucao:
 					self.E4.setInstrucao(self.E3.instrucao)
 					self.E4.do()
-					if not self.E2.bloqueado:
+					if not self.E2.bloqueado & self.E2.passarInstrucao:
 						self.E3.setInstrucao(self.E2.instrucao)
 						self.E3.do()
-						if not self.E1.bloqueado:
+						if not self.E1.bloqueado & self.E1.passarInstrucao:
 							self.E2.setInstrucao(self.E1.instrucao)
 							self.E2.do()
-							self.pc = bin(eval(self.pc) + 4)							
+							if not self.avancapc:
+								self.avancapc = True
+							else:
+								self.pc = bin(eval(self.pc) + 4)	
+							self.E1.setInstrucao(self.E2.decodInst(self.E1.do(eval(self.pc)/4)))						
 						else:
+							self.E1.setNop()
 							self.E2.setNop()
-							self.E1.desbloquear()
-						self.E1.setInstrucao(self.E2.decodInst(self.E1.do(eval(self.pc)/4)))
 					else:
 						self.E3.setNop()
 				else:
@@ -453,35 +523,35 @@ class Mips:
 			self.setText(self.view.lend4, self.end4, "")
 			self.setText(self.view.lval4, self.val4, "?")
 
-			self.view.lr0["text"] = str(self.r0)
-			self.view.lr1["text"] = str(self.r1)
-			self.view.lr2["text"] = str(self.r2)
-			self.view.lr3["text"] = str(self.r3)
-			self.view.lr4["text"] = str(self.r4)
-			self.view.lr5["text"] = str(self.r5)
-			self.view.lr6["text"] = str(self.r6)
-			self.view.lr7["text"] = str(self.r7)
-			self.view.lr8["text"] = str(self.r8)
-			self.view.lr9["text"] = str(self.r9)
-			self.view.lr10["text"] = str(self.r10)
-			self.view.lr11["text"] = str(self.r11)
-			self.view.lr12["text"] = str(self.r12)
-			self.view.lr13["text"] = str(self.r13)
-			self.view.lr14["text"] = str(self.r14)
-			self.view.lr15["text"] = str(self.r15)
-			self.view.lr16["text"] = str(self.r16)
-			self.view.lr17["text"] = str(self.r17)
-			self.view.lr18["text"] = str(self.r18)
-			self.view.lr19["text"] = str(self.r19)
-			self.view.lr20["text"] = str(self.r20)
-			self.view.lr21["text"] = str(self.r21)
-			self.view.lr22["text"] = str(self.r22)
-			self.view.lr23["text"] = str(self.r23)
-			self.view.lr24["text"] = str(self.r24)
-			self.view.lr25["text"] = str(self.r25)
-			self.view.lr26["text"] = str(self.r26)
-			self.view.lr27["text"] = str(self.r27)
-			self.view.lr28["text"] = str(self.r28)
-			self.view.lr29["text"] = str(self.r29)
-			self.view.lr30["text"] = str(self.r30)
-			self.view.lr31["text"] = str(self.r31)  
+			self.view.lr0["text"] = str(self.reg[0].valor)
+			self.view.lr1["text"] = str(self.reg[1].valor)
+			self.view.lr2["text"] = str(self.reg[2].valor)
+			self.view.lr3["text"] = str(self.reg[3].valor)
+			self.view.lr4["text"] = str(self.reg[4].valor)
+			self.view.lr5["text"] = str(self.reg[5].valor)
+			self.view.lr6["text"] = str(self.reg[6].valor)
+			self.view.lr7["text"] = str(self.reg[7].valor)
+			self.view.lr8["text"] = str(self.reg[8].valor)
+			self.view.lr9["text"] = str(self.reg[9].valor)
+			self.view.lr10["text"] = str(self.reg[10].valor)
+			self.view.lr11["text"] = str(self.reg[11].valor)
+			self.view.lr12["text"] = str(self.reg[12].valor)
+			self.view.lr13["text"] = str(self.reg[13].valor)
+			self.view.lr14["text"] = str(self.reg[14].valor)
+			self.view.lr15["text"] = str(self.reg[15].valor)
+			self.view.lr16["text"] = str(self.reg[16].valor)
+			self.view.lr17["text"] = str(self.reg[17].valor)
+			self.view.lr18["text"] = str(self.reg[18].valor)
+			self.view.lr19["text"] = str(self.reg[19].valor)
+			self.view.lr20["text"] = str(self.reg[20].valor)
+			self.view.lr21["text"] = str(self.reg[21].valor)
+			self.view.lr22["text"] = str(self.reg[22].valor)
+			self.view.lr23["text"] = str(self.reg[23].valor)
+			self.view.lr24["text"] = str(self.reg[24].valor)
+			self.view.lr25["text"] = str(self.reg[25].valor)
+			self.view.lr26["text"] = str(self.reg[26].valor)
+			self.view.lr27["text"] = str(self.reg[27].valor)
+			self.view.lr28["text"] = str(self.reg[28].valor)
+			self.view.lr29["text"] = str(self.reg[29].valor)
+			self.view.lr30["text"] = str(self.reg[30].valor)
+			self.view.lr31["text"] = str(self.reg[31].valor)  
