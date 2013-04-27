@@ -1,5 +1,5 @@
 # -.- coding: utf-8 -.-
-import models, modelsBypass
+import modelsBypass
 import inputs
 import view
 

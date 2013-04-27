@@ -46,12 +46,12 @@ class InstrucaoR(Instrucao):
 					self.mips.B = self.mips.reg[eval(self.rt)].proxResultado
 				else:
 					self.mips.B = self.mips.reg[eval(self.rt)].valor
-				self.mips.reg[eval(self.rd)].bloquear()
+				# self.mips.reg[eval(self.rd)].bloquear()
 				self.mips.shamt = self.shamt
 		else:
 			self.mips.A = self.mips.reg[eval(self.rs)].valor
 			self.mips.B = self.mips.reg[eval(self.rt)].valor
-			self.mips.reg[eval(self.rd)].bloquear()
+			# self.mips.reg[eval(self.rd)].bloquear()
 			self.mips.shamt = self.shamt
 
 	def writeback(self):
@@ -176,12 +176,12 @@ class Addi(InstrucaoI):
 				else:
 					self.mips.B = self.mips.reg[eval(self.rt)].valor
 				self.mips.Imm = self.immediate
-				self.mips.reg[eval(self.rt)].bloquear()
+				# self.mips.reg[eval(self.rt)].bloquear()
 		else:
 			self.mips.A = self.mips.reg[eval(self.rs)].valor
 			self.mips.B = self.mips.reg[eval(self.rt)].valor
 			self.mips.Imm = self.immediate
-			self.mips.reg[eval(self.rt)].bloquear()
+			# self.mips.reg[eval(self.rt)].bloquear()
 
 	def execute(self):
 		self.mips.ULA = bin(eval(self.mips.A) + eval(self.mips.Imm))
@@ -357,7 +357,7 @@ class Lw(InstrucaoI):
 						self.mips.E2.esperarClock()
 					else:
 						self.mips.resultado = self.mips.mem[self.destino].proxResultado
-						self.mips.reg[eval(self.rt)].bloquear()
+						# self.mips.reg[eval(self.rt)].bloquear()
 						self.mips.addListaMemoria(self.destino)
 						self.mips.reg[eval(self.rt)].proxResultado = self.resultado
 						self.mips.reg[eval(self.rt)].resultadoDisponivel = True
@@ -368,14 +368,14 @@ class Lw(InstrucaoI):
 						self.mips.E2.esperarClock()
 				else:
 					self.mips.resultado = self.mips.mem[self.destino].proxResultado
-					self.mips.reg[eval(self.rt)].bloquear()
+					# self.mips.reg[eval(self.rt)].bloquear()
 					self.mips.addListaMemoria(self.destino)
 					self.mips.reg[eval(self.rt)].proxResultado = self.resultado
 					self.mips.reg[eval(self.rt)].resultadoDisponivel = True
 			else:
 				self.mips.Imm = self.immediate
 				self.resultado = self.mips.mem[self.destino].valor
-				self.mips.reg[eval(self.rt)].bloquear()
+				# self.mips.reg[eval(self.rt)].bloquear()
 				self.mips.addListaMemoria(self.destino)
 				self.mips.reg[eval(self.rt)].proxResultado = self.resultado
 				self.mips.reg[eval(self.rt)].resultadoDisponivel = True
@@ -412,7 +412,7 @@ class Sw(InstrucaoI):
 		else:
 			self.mips.Imm = self.immediate
 			self.destino = 	eval(self.mips.reg[eval(self.rs)].valor) + eval(self.mips.Imm)
-			self.mips.mem[self.destino].bloquear()
+			# self.mips.mem[self.destino].bloquear()
 			self.resultado = self.mips.reg[eval(self.rt)].valor
 			self.mips.mem[self.destino].proxResultado = self.resultado
 			self.mips.mem[self.destino].resultadoDisponivel = True
@@ -625,46 +625,30 @@ class Mips:
 		self.ClockIndisponivel()
 		if not self.E5.bloqueado:
 			if not self.E5.desbloqueou:
-				print "E5 nao desbloqueou"
 				if self.E5.instrucao.__class__.__name__ != "Nop":
 					self.concluidas = self.concluidas + 1
 					if self.E5.instrucao.temLocalDestino:
 						self.addIndisponivel(self.E5.instrucao.localDestino())
 				if not self.E4.bloqueado:
 					if not self.E4.desbloqueou:
-						print "E4 nao desbloqueou"
 						self.E5.setInstrucao(self.E4.instrucao)
-						print "E4 nao desbloqueou - "+self.E5.InstName
-						print str(self.clock)+":1 " + str(eval(self.reg[10].valor))
 						self.E5.do()
-						print str(self.clock)+":2 " + str(eval(self.reg[10].valor))
-						print "E5 executou"
 						if not self.E3.bloqueado:
 							if not self.E3.desbloqueou:
-								print "E3 nao desbloqueou"
 								self.E4.setInstrucao(self.E3.instrucao)
-								print "ANTES DE E4: " + self.E4.InstName
 								self.E4.do()
-								print "DEPOIS DE E4"
 								if not self.E2.bloqueado:
 									if not self.E2.desbloqueou:
-										print "E2 nao desbloqueou"
 										self.E3.setInstrucao(self.E2.instrucao)
-										print "E3: "+self.E3.InstName
 										self.E3.do()
-										print "Executou"
 										if not self.E1.bloqueado:
 											if not self.E1.desbloqueou:
-												print "E1 nao desbloqueou"
 												self.E2.setInstrucao(self.E1.instrucao)
-												print "inicio: "+self.E2.InstName
 												self.E2.do()
-												print "Executou E2"
 												if not self.avancapc:
 													self.avancapc = True
 												else:
 													self.pc = bin(eval(self.pc) + 4)	
-												print "PC: "+ self.pc
 												self.E1.setInstrucao(self.E2.decodInst(self.E1.do(eval(self.pc)/4)))
 											else:
 												self.E2.setNop()
