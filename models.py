@@ -349,7 +349,10 @@ class InstructionFetch(Estagio):
 		Estagio.__init__(self, num,  mips)
 
 	def do(self, i):
-		inst = self.mips.fr.getInst(i)[0:32]
+		if i < self.mips.fr.count():
+			inst = self.mips.fr.getInst(i)[0:32]
+		else:
+			inst = "0"*32
 		return inst
 
 class InstructionDecodeRegisterFetch(Estagio):
