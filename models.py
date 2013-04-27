@@ -310,10 +310,11 @@ class Estagio:
 		self.bloqueado = False
 		self.setNop()
 		self.saida = 0
-		self.passarInstrucao = True
+		self.desbloqueou = False
 
 	def desbloquear(self):
 		self.bloqueado = False
+		self.desbloqueou = True
 
 	def bloquear(self):
 		self.bloqueado = True
@@ -472,33 +473,62 @@ class Mips:
 		self.clock = self.clock + 1
 
 		if not self.E5.bloqueado:
-			if not self.E4.bloqueado & self.E4.passarInstrucao:
-				self.E5.setInstrucao(self.E4.instrucao)
-				self.E5.do()
-				if not self.E3.bloqueado & self.E3.passarInstrucao:
-					self.E4.setInstrucao(self.E3.instrucao)
-					self.E4.do()
-					if not self.E2.bloqueado & self.E2.passarInstrucao:
-						self.E3.setInstrucao(self.E2.instrucao)
-						self.E3.do()
-						if not self.E1.bloqueado & self.E1.passarInstrucao:
-							self.E2.setInstrucao(self.E1.instrucao)
-							self.E2.do()
-							if not self.avancapc:
-								self.avancapc = True
+			if not self.E5.desbloqueou:
+				print "E5 nao desbloqueou"
+				if not self.E4.bloqueado:
+					if not self.E4.desbloqueou:
+						print "E4 nao desbloqueou"
+						self.E5.setInstrucao(self.E4.instrucao)
+						print "E5 recebeu E4"
+						self.E5.do()
+						print "E5 executou"
+						if not self.E3.bloqueado:
+							if not self.E3.desbloqueou:
+								print "E3 nao desbloqueou"
+								self.E4.setInstrucao(self.E3.instrucao)
+								self.E4.do()
+								if not self.E2.bloqueado:
+									if not self.E2.desbloqueou:
+										print "E2 nao desbloqueou"
+										self.E3.setInstrucao(self.E2.instrucao)
+										self.E3.do()
+										if not self.E1.bloqueado:
+											if not self.E1.desbloqueou:
+												self.E2.setInstrucao(self.E1.instrucao)
+												self.E2.do()
+												print "inicio"
+												if not self.avancapc:
+													self.avancapc = True
+												else:
+													self.pc = bin(eval(self.pc) + 4)	
+												self.E1.setInstrucao(self.E2.decodInst(self.E1.do(eval(self.pc)/4)))
+											else:
+												self.E2.setNop()
+												self.E1.desbloqueou = False
+												self.E1.do()
+										else:
+											self.E2.setNop()
+									else:
+										self.E3.setNop()
+										self.E2.desbloqueou = False
+										self.E2.do()
+								else:
+									self.E3.setNop()
 							else:
-								self.pc = bin(eval(self.pc) + 4)	
-							self.E1.setInstrucao(self.E2.decodInst(self.E1.do(eval(self.pc)/4)))						
+								self.E4.setNop()
+								self.E3.desbloqueou = False
+								self.E3.do()
 						else:
-							self.E1.setNop()
-							self.E2.setNop()
+							self.E4.setNop()
 					else:
-						self.E3.setNop()
+						self.E5.setNop()
+						self.E4.desbloqueou = False
+						self.E4.do()
 				else:
-					self.E4.setNop()
+					self.E5.setNop()
 			else:
-				self.E5.setNop()
-
+				self.E5.desbloqueou = False
+				self.E5.do()
 		self.atualizarLabels()
 
 
