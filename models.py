@@ -12,7 +12,17 @@ class Registrador:
 	def desbloquear(self):
 		self.bloqueado = False
 
-class InstrucaoR:
+class Instrucao:
+	def decode(self):
+		pass
+	def execute(self):
+		pass
+	def memaccess(self):
+		pass
+	def writeback(self):
+		pass
+
+class InstrucaoR(Instrucao):
 	def __init__(self, mips, instrucao):
 		self.mips = mips
 		self.rs = bin(eval("0b"+instrucao[6:11]))
@@ -29,14 +39,11 @@ class InstrucaoR:
 			self.mips.reg[eval(self.rd)].bloquear()
 			self.mips.shamt = self.shamt
 
-	def memaccess(self):
-		pass
-
 	def writeback(self):
 		self.mips.reg[eval(self.rd)].valor = self.mips.ULA
 		self.mips.reg[eval(self.rd)].desbloquear()
 
-class InstrucaoI:
+class InstrucaoI(Instrucao):
 	
 	def __init__(self, mips, instrucao):
 		self.mips = mips
@@ -44,7 +51,7 @@ class InstrucaoI:
 		self.rt = bin(eval("0b"+instrucao[11:16]))
 		self.immediate = bin(eval("0b"+instrucao[16:32]))	
 
-class InstrucaoJ:
+class InstrucaoJ(Instrucao):
 	
 	def __init__(self, mips, instrucao):
 		self.mips = mips
@@ -58,16 +65,10 @@ class Jmp(InstrucaoJ):
 	def decode(self):
 		self.mips.E1.bloquear()
 
-	def execute(self):
-		pass
-
 	def memaccess(self):
 		self.mips.pc = self.targetAddress
 		self.mips.avancapc = False
 		self.mips.E1.desbloquear()
-
-	def writeback(self):
-		pass
 
 	def texto(self):    
 		return "jmp" + str(eval(self.targetAddress))
@@ -141,7 +142,6 @@ class Addi(InstrucaoI):
 
 	def execute(self):
 		self.mips.ULA = bin(eval(self.mips.A) + eval(self.mips.Imm))
-		# print "Executou addi - ULA:"+str(eval(self.mips.ULA))
 
 	def memaccess(self):
 		pass
@@ -165,7 +165,7 @@ class Beq(InstrucaoI):
 			self.mips.A = self.mips.reg[eval(self.rs)].valor
 			self.mips.B = self.mips.reg[eval(self.rt)].valor
 			self.mips.Imm = self.immediate
-			mips.E1.bloquear()
+			self.mips.E1.bloquear()
 
 	def execute(self):
 		self.equal = False
@@ -176,10 +176,10 @@ class Beq(InstrucaoI):
 	def memaccess(self):
 		if self.equal == True:
 			self.mips.pc = self.mips.ULA
-			mips.avancapc = False
+			self.mips.avancapc = False
 		else:
-			mips.avancapc = True
-		mips.E1.desbloquear()
+			self.mips.avancapc = True
+		self.mips.E1.desbloquear()
 
 	def writeback(self):
 		pass
@@ -199,7 +199,7 @@ class Ble(InstrucaoI):
 			self.mips.A = self.mips.reg[eval(self.rs)].valor
 			self.mips.B = self.mips.reg[eval(self.rt)].valor
 			self.mips.Imm = self.immediate
-			mips.E1.bloquear()
+			self.mips.E1.bloquear()
 
 	def execute(self):
 		self.equal = False
@@ -210,10 +210,10 @@ class Ble(InstrucaoI):
 	def memaccess(self):
 		if self.equal == True:
 			self.mips.pc = self.mips.ULA
-			mips.avancapc = False
+			self.mips.avancapc = False
 		else:
-			mips.avancapc = True
-		mips.E1.desbloquear()
+			self.mips.avancapc = True
+		self.mips.E1.desbloquear()
 
 	def writeback(self):
 		pass
@@ -233,7 +233,7 @@ class Bne(InstrucaoI):
 			self.mips.A = self.mips.reg[eval(self.rs)].valor
 			self.mips.B = self.mips.reg[eval(self.rt)].valor
 			self.mips.Imm = self.immediate
-			mips.E1.bloquear()
+			self.mips.E1.bloquear()
 
 	def execute(self):
 		self.equal = False
@@ -244,10 +244,10 @@ class Bne(InstrucaoI):
 	def memaccess(self):
 		if self.equal == True:
 			self.mips.pc = self.mips.ULA
-			mips.avancapc = False
+			self.mips.avancapc = False
 		else:
-			mips.avancapc = True
-		mips.E1.desbloquear()
+			self.mips.avancapc = True
+		self.mips.E1.desbloquear()
 
 	def writeback(self):
 		pass
@@ -264,22 +264,17 @@ class Lw(InstrucaoI):
 		if self.mips.reg[eval(self.rs)].bloqueado | self.mips.reg[eval(self.rt)].bloqueado:
 			self.mips.E2.esperarClock()
 		else:
-			self.mips.A = self.mips.reg[eval(self.rs)].valor
-			self.mips.B = self.mips.reg[eval(self.rt)].valor
 			self.mips.Imm = self.immediate
 
 			self.mips.reg[eval(self.rt)].bloquear()
 			self.resultado = self.mips.mem[eval(self.mips.reg[eval(self.rs)].valor) + eval(self.mips.Imm)].valor
-
-	def execute(self):
-		pass
 
 	def writeback(self):
 		self.mips.reg[eval(self.rt)].valor = self.resultado
 		self.mips.reg[eval(self.rt)].desbloquear()
 
 	def texto(self):
-		return "lw R" + str(eval(self.rs)) + ", " + str(eval(self.immediate)) + "(R" + str(eval(self.rt)) + ")"
+		return "lw R" + str(eval(self.rt)) + ", " + str(eval(self.immediate)) + "(R" + str(eval(self.rs)) + ")"
 class Sw(InstrucaoI):
 
 	def __init__(self, mips, instrucao):
@@ -291,15 +286,11 @@ class Sw(InstrucaoI):
 		else:
 			self.mips.Imm = self.immediate
 			self.destino = 	eval(self.mips.reg[eval(self.rs)].valor) + eval(self.mips.Imm)
-
 			if self.mips.mem[self.destino].bloqueado:
 				self.mips.E2.esperarClock()
 			else:
 				self.mips.mem[self.destino].bloquear()
 				self.resultado = self.mips.reg[eval(self.rt)].valor
-
-	def execute(self):
-		pass
 
 	def memaccess(self):
 		self.mips.mem[self.destino].valor = self.resultado
@@ -309,7 +300,7 @@ class Sw(InstrucaoI):
 		pass
 
 	def texto(self):
-		return "sw R" + str(eval(self.rs)) + ", " + str(eval(self.immediate)) + "(R" + str(eval(self.rt)) + ")"
+		return "sw R" + str(eval(self.rt)) + ", " + str(eval(self.immediate)) + "(R" + str(eval(self.rs)) + ")"
 
 class Estagio:
 	def __init__(self, num, mips):
@@ -322,14 +313,12 @@ class Estagio:
 		self.desbloqueou = False
 
 	def desbloquear(self):
-		print "Instrucao que desbloqueou: "+self.InstName
 		self.bloqueado = False
 
 	def esperarClock(self):
 		self.desbloqueou = True
 
 	def bloquear(self):
-		print "Instrucao que bloqueou: "+self.InstName
 		self.bloqueado = True
 
 	def setNop(self):
@@ -505,8 +494,9 @@ class Mips:
 											if not self.E1.desbloqueou:
 												print "E1 nao desbloqueou"
 												self.E2.setInstrucao(self.E1.instrucao)
-												print "inicio"
+												print "inicio: "+self.E2.InstName
 												self.E2.do()
+												print "Executou E2"
 												if not self.avancapc:
 													self.avancapc = True
 												else:
