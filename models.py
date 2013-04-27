@@ -313,6 +313,7 @@ class Estagio:
 		self.desbloqueou = False
 
 	def desbloquear(self):
+		print "FUNCAO DESBLOQUEAR"
 		self.bloqueado = False
 		self.desbloqueou = True
 
@@ -411,7 +412,7 @@ class WriteBack(Estagio):
 	def do(self):
 		self.bloquear()
 		self.instrucao.writeback()
-		self.debloquear()
+		self.desbloquear()
 
 class Mips:
 	def __init__(self):
@@ -479,9 +480,7 @@ class Mips:
 					if not self.E4.desbloqueou:
 						print "E4 nao desbloqueou"
 						self.E5.setInstrucao(self.E4.instrucao)
-						print "E5 recebeu E4"
 						self.E5.do()
-						print "E5 executou"
 						if not self.E3.bloqueado:
 							if not self.E3.desbloqueou:
 								print "E3 nao desbloqueou"
