@@ -65,7 +65,7 @@ class Application(Frame):
         print "Play!"
         # Para agilizar a execucao - Remover depois
         # self.FileName["text"] = os.getcwd().replace("\\","/")+"/instructions/program_addi.txt"
-        self.FileName["text"] = os.getcwd().replace("\\","/")+"/instructions/program2.txt"
+        self.FileName["text"] = os.getcwd().replace("\\","/")+"/instructions/program.txt"
         self.mips.read(self.FileName["text"])
 
         if self.pendulo == None:
@@ -117,32 +117,32 @@ class Application(Frame):
         self.lpc["text"] = "?"
         self.lconcluidas["text"] = "?"
         self.lprodutividade["text"] = "?"
-        self.E1_instrucao["text"] = "l1:addi R10, R0, 100"
+        self.E1_instrucao["text"] = "l1:"
         self.E1_controle["text"] = ""
-        self.E2_instrucao["text"] = "l2:sw R0, 24(R0)"
+        self.E2_instrucao["text"] = "l2:"
         self.E2_controle["text"] = ""
-        self.E3_instrucao["text"] = "l3:sw R0, 28(R0)"
+        self.E3_instrucao["text"] = "l3:"
         self.E3_controle["text"] = ""
-        self.E4_instrucao["text"] = "l4:lw R6,28(R0)"
+        self.E4_instrucao["text"] = "l4:"
         self.E4_controle["text"] = ""
-        self.E5_instrucao["text"] = "l5:mul R7,R6,R6"
+        self.E5_instrucao["text"] = "l5:"
         self.E5_controle["text"] = ""
-        self.lval1["text"] = "24"
+        self.lval1["text"] = "-"
         self.lend1["text"] = "?"
-        self.lval2["text"] = "28"
+        self.lval2["text"] = "-"
         self.lend2["text"] = "?"
-        self.lval3["text"] = "28"
+        self.lval3["text"] = "-"
         self.lend3["text"] = "?"
-        self.lval4["text"] = "28"
+        self.lval4["text"] = "-"
         self.lend4["text"] = "?"
-        self.lr0["text"] = "0"
-        self.lr1["text"] = "0"
-        self.lr2["text"] = "0"
-        self.lr3["text"] = "0"
-        self.lr4["text"] = "0"
-        self.lr5["text"] = "0"
-        self.lr6["text"] = "0"
-        self.lr7["text"] = "0"
+        self.lr0["text"] = "?"
+        self.lr1["text"] = "?"
+        self.lr2["text"] = "?"
+        self.lr3["text"] = "?"
+        self.lr4["text"] = "?"
+        self.lr5["text"] = "?"
+        self.lr6["text"] = "?"
+        self.lr7["text"] = "?"
         self.lr8["text"] = "?"
         self.lr9["text"] = "?"
         self.lr10["text"] = "?"
@@ -171,15 +171,15 @@ class Application(Frame):
     def labels_iniciais(self):
         canvas = self.canvas
         
-        self.E1_instrucao = E1_instrucao = Label(self, text="l1:addi R10, R0, 100", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
+        self.E1_instrucao = E1_instrucao = Label(self, text="l1:", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
         E1inst_window = canvas.create_window(51, self.linha_instrucoes, anchor=NW, window=E1_instrucao)
-        self.E2_instrucao = E2_instrucao = Label(self, text="l2:sw R0, 24(R0)", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
+        self.E2_instrucao = E2_instrucao = Label(self, text="l2:", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
         E2inst_window = canvas.create_window(215, self.linha_instrucoes, anchor=NW, window=E2_instrucao)
-        self.E3_instrucao = E3_instrucao = Label(self, text="l3:sw R0, 28(R0)", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
+        self.E3_instrucao = E3_instrucao = Label(self, text="l3:", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
         E3inst_window = canvas.create_window(379, self.linha_instrucoes, anchor=NW, window=E3_instrucao)
-        self.E4_instrucao = E4_instrucao = Label(self, text="l4:lw R6,28(R0)", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
+        self.E4_instrucao = E4_instrucao = Label(self, text="l4:", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
         E4inst_window = canvas.create_window(543, self.linha_instrucoes, anchor=NW, window=E4_instrucao)
-        self.E5_instrucao = E5_instrucao = Label(self, text="l5:mul R7,R6,R6", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
+        self.E5_instrucao = E5_instrucao = Label(self, text="l5:", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=18)
         E5inst_window = canvas.create_window(707, self.linha_instrucoes, anchor=NW, window=E5_instrucao)
         
         self.FileNameLabel = FileNameLabel = Label(self, text="Choosen file:", bg=self.lblbgcolor, anchor=NW, font=self.fonte_negrito, width=40)
@@ -207,38 +207,38 @@ class Application(Frame):
         self.lprodutividade = lprodutividade = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_maior, width=7)
         pipeliNW_window = canvas.create_window(1089, 150, anchor=NW, window=lprodutividade)
 
-        self.lend1 = lend1 = Label(self, text="24", bg=self.lblbgcolor, anchor=CENTER, font=self.fonte_maior, width=10)
+        self.lend1 = lend1 = Label(self, text="-", bg=self.lblbgcolor, anchor=CENTER, font=self.fonte_maior, width=10)
         end1_window = canvas.create_window(self.coluna_end, 264, anchor=NW, window=lend1)
         self.lval1 = lval1 = Label(self, text="?", bg=self.lblbgcolor, anchor=CENTER, font=self.fonte_maior, width=10)
         val1_window = canvas.create_window(self.coluna_valor, 264, anchor=NW, window=lval1)
-        self.lend2 = lend2 = Label(self, text="28", bg=self.lblbgcolor, anchor=CENTER, font=self.fonte_maior, width=10)
+        self.lend2 = lend2 = Label(self, text="-", bg=self.lblbgcolor, anchor=CENTER, font=self.fonte_maior, width=10)
         end2_window = canvas.create_window(self.coluna_end, 299, anchor=NW, window=lend2)
         self.lval2 = lval2 = Label(self, text="?", bg=self.lblbgcolor, anchor=CENTER, font=self.fonte_maior, width=10)
         val2_window = canvas.create_window(self.coluna_valor, 299, anchor=NW, window=lval2)
-        self.lend3 = lend3 = Label(self, text="28", bg=self.lblbgcolor, anchor=CENTER, font=self.fonte_maior, width=10)
+        self.lend3 = lend3 = Label(self, text="-", bg=self.lblbgcolor, anchor=CENTER, font=self.fonte_maior, width=10)
         end3_window = canvas.create_window(self.coluna_end, 334, anchor=NW, window=lend3)
         self.lval3 = lval3 = Label(self, text="?", bg=self.lblbgcolor, anchor=CENTER, font=self.fonte_maior, width=10)
         val3_window = canvas.create_window(self.coluna_valor, 334, anchor=NW, window=lval3)
-        self.lend4 = lend4 = Label(self, text="28", bg=self.lblbgcolor, anchor=CENTER, font=self.fonte_maior, width=10)
+        self.lend4 = lend4 = Label(self, text="-", bg=self.lblbgcolor, anchor=CENTER, font=self.fonte_maior, width=10)
         end4_window = canvas.create_window(self.coluna_end, 369, anchor=NW, window=lend4)
         self.lval4 = lval4 = Label(self, text="?", bg=self.lblbgcolor, anchor=CENTER, font=self.fonte_maior, width=10)
         val4_window = canvas.create_window(self.coluna_valor, 369, anchor=NW, window=lval4)
 
-        self.lr0 = lr0 = Label(self, text="0", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=4)
+        self.lr0 = lr0 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=4)
         r0_window = canvas.create_window(self.colr0, self.linr0, anchor=NW, window=lr0)
-        self.lr1 = lr1 = Label(self, text="0", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=4)
+        self.lr1 = lr1 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=4)
         r1_window = canvas.create_window(self.colr0 , self.linr0 + self.reglindist, anchor=NW, window=lr1)
-        self.lr2 = lr2 = Label(self, text="0", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=4)
+        self.lr2 = lr2 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=4)
         r2_window = canvas.create_window(self.colr0, self.linr0 + 2*self.reglindist, anchor=NW, window=lr2)
-        self.lr3 = lr3 = Label(self, text="0", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=4)
+        self.lr3 = lr3 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=4)
         r3_window = canvas.create_window(self.colr0, self.linr0 + 3*self.reglindist, anchor=NW, window=lr3)
-        self.lr4 = lr4 = Label(self, text="0", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=4)
+        self.lr4 = lr4 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=4)
         r4_window = canvas.create_window(self.colr0, self.linr0 + 4*self.reglindist, anchor=NW, window=lr4)
-        self.lr5 = lr5 = Label(self, text="0", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=4)
+        self.lr5 = lr5 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=4)
         r5_window = canvas.create_window(self.colr0, self.linr0 + 5*self.reglindist, anchor=NW, window=lr5)
-        self.lr6 = lr6 = Label(self, text="0", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=4)
+        self.lr6 = lr6 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=4)
         r6_window = canvas.create_window(self.colr0, self.linr0 + 6*self.reglindist, anchor=NW, window=lr6)
-        self.lr7 = lr7 = Label(self, text="0", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=4)
+        self.lr7 = lr7 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=4)
         r7_window = canvas.create_window(self.colr0, self.linr0 + 7*self.reglindist, anchor=NW, window=lr7)
 
         self.lr8 = lr8 = Label(self, text="?", bg=self.lblbgcolor, anchor=NW, font=self.fonte_textos, width=4)

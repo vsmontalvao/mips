@@ -266,13 +266,15 @@ class Lw(InstrucaoI):
 			self.mips.E2.esperarClock()
 		else:
 			self.destino = eval(self.mips.reg[eval(self.rs)].valor) + eval(self.immediate)
-			if self.mips.mem[self.destino].bloqueado:
-				self.mips.E2.esperarClock()
-			else:
-				self.mips.Imm = self.immediate
-				self.resultado = self.mips.mem[self.destino].valor
-				self.mips.reg[eval(self.rt)].bloquear()
-				self.mips.addListaMemoria(self.destino)
+			self.mips.Imm = self.immediate
+			self.mips.reg[eval(self.rt)].bloquear()
+
+	def memaccess(self):
+		if self.mips.mem[self.destino].bloqueado:
+				self.mips.E4.esperarClock()
+		else:
+			self.resultado = self.mips.mem[self.destino].valor
+			self.mips.addListaMemoria(self.destino)
 
 	def writeback(self):
 		self.mips.reg[eval(self.rt)].valor = self.resultado
@@ -418,17 +420,6 @@ class Mips:
 	def __init__(self):
 		self.inicio()
 		self.fr = FileReader()   
-		self.mem = []
-		for i in range(0, 2**15):
-			self.mem.append(Registrador())# vc pode checar o tamanho com len(self.mem) e acessar cada posicao
-							   # independentemente com self.mips.mem[i] dai para manipular os 32 bits podemos
-							   # mexer com os valores binarios e decimais
-		self.reg = []
-		for i in range(0, 2**5):
-			self.reg.append(Registrador())
-		self.avancapc = False
-		self.listaDeDesbloqueio = []
-		self.listaMemoria = []
 
 	def addListaMemoria(self, endereco):
 		self.listaMemoria.append([endereco, str(eval(self.mem[endereco].valor))])
@@ -478,6 +469,18 @@ class Mips:
 		self.end4 = None
 		self.val4 = None
 
+		self.mem = []
+		for i in range(0, 2**15):
+			self.mem.append(Registrador())# vc pode checar o tamanho com len(self.mem) e acessar cada posicao
+							   # independentemente com self.mips.mem[i] dai para manipular os 32 bits podemos
+							   # mexer com os valores binarios e decimais
+		self.reg = []
+		for i in range(0, 2**5):
+			self.reg.append(Registrador())
+		self.avancapc = False
+		self.listaDeDesbloqueio = []
+		self.listaMemoria = []
+
 	def setView(self, view):
 		self.view = view
 
@@ -492,44 +495,28 @@ class Mips:
 		self.ClockDesbloquear()
 		if not self.E5.bloqueado:
 			if not self.E5.desbloqueou:
-				print "E5 nao desbloqueou"
 				if self.E5.instrucao.__class__.__name__ != "Nop":
 					self.concluidas = self.concluidas + 1
 				if not self.E4.bloqueado:
 					if not self.E4.desbloqueou:
-						print "E4 nao desbloqueou"
 						self.E5.setInstrucao(self.E4.instrucao)
-						print "E4 nao desbloqueou - "+self.E5.InstName
-						print str(self.clock)+":1 " + str(eval(self.reg[10].valor))
 						self.E5.do()
-						print str(self.clock)+":2 " + str(eval(self.reg[10].valor))
-						print "E5 executou"
 						if not self.E3.bloqueado:
 							if not self.E3.desbloqueou:
-								print "E3 nao desbloqueou"
 								self.E4.setInstrucao(self.E3.instrucao)
-								print "ANTES DE E4: " + self.E4.InstName
 								self.E4.do()
-								print "DEPOIS DE E4"
 								if not self.E2.bloqueado:
 									if not self.E2.desbloqueou:
-										print "E2 nao desbloqueou"
 										self.E3.setInstrucao(self.E2.instrucao)
-										print "E3: "+self.E3.InstName
 										self.E3.do()
-										print "Executou"
 										if not self.E1.bloqueado:
 											if not self.E1.desbloqueou:
-												print "E1 nao desbloqueou"
 												self.E2.setInstrucao(self.E1.instrucao)
-												print "inicio: "+self.E2.InstName
 												self.E2.do()
-												print "Executou E2"
 												if not self.avancapc:
 													self.avancapc = True
 												else:
 													self.pc = bin(eval(self.pc) + 4)	
-												print "PC: "+ self.pc
 												self.E1.setInstrucao(self.E2.decodInst(self.E1.do(eval(self.pc)/4)))
 											else:
 												self.E2.setNop()
