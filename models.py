@@ -338,12 +338,14 @@ class Estagio:
 		self.desbloqueou = False
 
 	def desbloquear(self):
+		print "Instrucao que desbloqueou: "+self.InstName
 		self.bloqueado = False
 
 	def esperarClock(self):
 		self.desbloqueou = True
 
 	def bloquear(self):
+		print "Instrucao que bloqueou: "+self.InstName
 		self.bloqueado = True
 
 	def setNop(self):
