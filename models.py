@@ -59,7 +59,7 @@ class Jmp(InstrucaoJ):
 
 	def decode(self):
 		mips.E1.bloquear()
-		mips.E1.avancapc = False
+		mips.avancapc = False
 
 	def execute(self):
 		pass
@@ -180,9 +180,9 @@ class Beq(InstrucaoI):
 	def memacess(self):
 		if self.equal == True:
 			self.mips.pc = self.mips.ULA
-			mips.E1.avancapc = False
+			mips.avancapc = False
 		else:
-			mips.E1.avancapc = True
+			mips.avancapc = True
 		mips.E1.desbloquear()
 
 	def writeback(self):
@@ -214,9 +214,9 @@ class Ble(InstrucaoI):
 	def memacess(self):
 		if self.equal == True:
 			self.mips.pc = self.mips.ULA
-			mips.E1.avancapc = False
+			mips.avancapc = False
 		else:
-			mips.E1.avancapc = True
+			mips.avancapc = True
 		mips.E1.desbloquear()
 
 	def writeback(self):
@@ -248,9 +248,9 @@ class Bne(InstrucaoI):
 	def memacess(self):
 		if self.equal == True:
 			self.mips.pc = self.mips.ULA
-			mips.E1.avancapc = False
+			mips.avancapc = False
 		else:
-			mips.E1.avancapc = True
+			mips.avancapc = True
 		mips.E1.desbloquear()
 
 	def writeback(self):
@@ -509,23 +509,23 @@ class Mips:
 					if not self.E4.desbloqueou:
 						print "E4 nao desbloqueou"
 						self.E5.setInstrucao(self.E4.instrucao)
-						self.E5.do()
+						# self.E5.do()
 						if not self.E3.bloqueado:
 							if not self.E3.desbloqueou:
 								print "E3 nao desbloqueou"
 								self.E4.setInstrucao(self.E3.instrucao)
-								self.E4.do()
+								# self.E4.do()
 								if not self.E2.bloqueado:
 									if not self.E2.desbloqueou:
 										print "E2 nao desbloqueou"
 										self.E3.setInstrucao(self.E2.instrucao)
-										self.E3.do()
+										# self.E3.do()
 										if not self.E1.bloqueado:
 											if not self.E1.desbloqueou:
 												print "E1 nao desbloqueou"
 												self.E2.setInstrucao(self.E1.instrucao)
 												print "inicio"
-												self.E2.do()
+												# self.E2.do()
 												if not self.avancapc:
 													self.avancapc = True
 												else:
