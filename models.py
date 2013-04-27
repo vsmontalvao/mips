@@ -258,6 +258,12 @@ class Lw(InstrucaoI):
 			self.resultado = self.mips.mem[eval(self.mips.reg[eval(self.rs)]) + self.mips.Imm]
 
 	def execute(self):
+		self.mips.ULA = bin(eval(self.mips.rs) + eval(self.mips.immediate))
+
+	def memacess(self):
+		self.mips.rt = self.mips.reg[eval(self.mips.ULA)]
+
+	def writeback(self):
 		pass
 
 	def writeback(self):
@@ -281,6 +287,12 @@ class Sw(InstrucaoI):
 			self.resultado = self.mips.reg[eval(self.rt)]
 
 	def execute(self):
+		self.mips.ULA = bin(eval(self.mips.rs) + eval(self.mips.immediate))
+
+	def memacess(self):
+		self.mips.reg[eval(self.mips.ULA)] = bin(eval(self.mips.rt))
+
+	def writeback(self):
 		pass
 
 	def memaccess(self):
