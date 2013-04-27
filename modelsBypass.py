@@ -46,12 +46,12 @@ class InstrucaoR(Instrucao):
 					self.mips.B = self.mips.reg[eval(self.rt)].proxResultado
 				else:
 					self.mips.B = self.mips.reg[eval(self.rt)].valor
-				# self.mips.reg[eval(self.rd)].bloquear()
+				self.mips.reg[eval(self.rd)].bloquear()
 				self.mips.shamt = self.shamt
 		else:
 			self.mips.A = self.mips.reg[eval(self.rs)].valor
 			self.mips.B = self.mips.reg[eval(self.rt)].valor
-			# self.mips.reg[eval(self.rd)].bloquear()
+			self.mips.reg[eval(self.rd)].bloquear()
 			self.mips.shamt = self.shamt
 
 	def writeback(self):
@@ -172,11 +172,11 @@ class Addi(InstrucaoI):
 				else:
 					self.mips.A = self.mips.reg[eval(self.rs)].valor
 				self.mips.Imm = self.immediate
-				# self.mips.reg[eval(self.rt)].bloquear()
+				self.mips.reg[eval(self.rt)].bloquear()
 		else:
 			self.mips.A = self.mips.reg[eval(self.rs)].valor
 			self.mips.Imm = self.immediate
-			# self.mips.reg[eval(self.rt)].bloquear()
+			self.mips.reg[eval(self.rt)].bloquear()
 
 	def execute(self):
 		self.mips.ULA = bin(eval(self.mips.A) + eval(self.mips.Imm))
@@ -348,9 +348,11 @@ class Lw(InstrucaoI):
 					self.mips.A = self.mips.reg[eval(self.rs)].valor
 				self.mips.Imm = self.immediate
 				self.destino = eval(self.mips.reg[eval(self.rs)].valor) + eval(self.immediate)
+				self.mips.reg[eval(self.rt)].bloquear()
 		else:
 			self.mips.Imm = self.immediate
 			self.destino = eval(self.mips.reg[eval(self.rs)].valor) + eval(self.immediate)
+			self.mips.reg[eval(self.rt)].bloquear()
 
 	def memaccess(self):
 		if self.mips.mem[self.destino].bloqueado:
@@ -398,13 +400,14 @@ class Sw(InstrucaoI):
 					self.resultado = self.mips.reg[eval(self.rt)].valor
 				self.mips.mem[self.destino].proxResultado = self.resultado
 				self.mips.mem[self.destino].resultadoDisponivel = True
+				self.mips.mem[self.destino].bloquear()
 		else:
 			self.mips.Imm = self.immediate
 			self.destino = 	eval(self.mips.reg[eval(self.rs)].valor) + eval(self.mips.Imm)
-			# self.mips.mem[self.destino].bloquear()
 			self.resultado = self.mips.reg[eval(self.rt)].valor
 			self.mips.mem[self.destino].proxResultado = self.resultado
 			self.mips.mem[self.destino].resultadoDisponivel = True
+			self.mips.mem[self.destino].bloquear()
 
 	def memaccess(self):
 		self.mips.mem[self.destino].valor = self.resultado
