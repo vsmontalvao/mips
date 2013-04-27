@@ -29,6 +29,7 @@ class InstrucaoR(Instrucao):
 		self.rt = bin(eval("0b"+instrucao[11:16]))
 		self.rd = bin(eval("0b"+instrucao[16:21]))
 		self.shamt = bin(eval("0b"+instrucao[21:26]))
+		self.isMul = False
 
 	def decode(self):
 		if self.mips.reg[eval(self.rs)].bloqueado | self.mips.reg[eval(self.rt)].bloqueado:
@@ -50,12 +51,14 @@ class InstrucaoI(Instrucao):
 		self.rs = bin(eval("0b"+instrucao[6:11]))
 		self.rt = bin(eval("0b"+instrucao[11:16]))
 		self.immediate = bin(eval("0b"+instrucao[16:32]))	
+		self.isMul = False
 
 class InstrucaoJ(Instrucao):
 	
 	def __init__(self, mips, instrucao):
 		self.mips = mips
 		self.targetAddress = bin(eval("0b"+instrucao[6:32]))
+		self.isMul = False
 
 class Jmp(InstrucaoJ):
 	
@@ -88,6 +91,7 @@ class Mul(InstrucaoR):
 	
 	def __init__(self, mips, instrucao):
 		InstrucaoR.__init__(self, mips, instrucao)
+		self.isMul = True
 
 	def execute(self):
 		self.mips.ULA = bin(eval(self.mips.A) * eval(self.mips.B))
@@ -143,15 +147,12 @@ class Addi(InstrucaoI):
 	def execute(self):
 		self.mips.ULA = bin(eval(self.mips.A) + eval(self.mips.Imm))
 
-	def memaccess(self):
-		pass
-
 	def writeback(self):
 		self.mips.reg[eval(self.rt)].valor = self.mips.ULA
 		self.mips.reg[eval(self.rt)].desbloquear()
 
 	def texto(self):
-		return "addi R" + str(eval(self.rs)) + ", R"+str(eval(self.rt)) + ", " + str(eval(self.immediate))
+		return "addi R" + str(eval(self.rt)) + ", R"+str(eval(self.rs)) + ", " + str(eval(self.immediate))
 
 class Beq(InstrucaoI):
 
@@ -202,10 +203,18 @@ class Ble(InstrucaoI):
 			self.mips.E1.bloquear()
 
 	def execute(self):
+		print "ANTES 1"
 		self.equal = False
+		print "ANTES 2"
+		print " A: "+str(eval(self.mips.A))
+		print " B: "+str(eval(self.mips.B))
 		if eval(self.mips.reg[eval(self.mips.A)].valor) <= eval(self.mips.reg[eval(self.mips.B)].valor):
+			print "ANTES 3"
 			self.equal = True
+			print "ANTES 4"
 			self.mips.ULA = self.mips.Imm      
+			print "ANTES 5"
+		print "DEPOIS 6"
 
 	def memaccess(self):
 		if self.equal == True:
@@ -385,14 +394,16 @@ class InstructionExecute(Estagio):
 		self.cont = 0
 
 	def do(self):
-		# if self.instrucao.__class__.__name__ == 'Mul':
-		# 	if self.cont == 0:
-		# 		self.instrucao.execute()
-		# 		self.cont = 1
-		# 	else:
-		# 		self.desbloquear()
-
-		self.instrucao.execute()
+		if self.instrucao.isMul:
+			if self.cont == 0:
+				self.instrucao.execute()
+				self.cont = 1
+				self.bloquear()
+			else:
+				self.desbloquear()
+				self.cont = 0
+		else:
+			self.instrucao.execute()
 
 class MemoryAccess(Estagio):
 	
@@ -414,18 +425,15 @@ class Mips:
 	def __init__(self):
 		self.inicio()
 		self.fr = FileReader()   
-		self.mem = [Registrador()] * 2**15 # vc pode checar o tamanho com len(self.mem) e acessar cada posicao
+		self.mem = []
+		for i in range(0, 2**15):
+			self.mem.append(Registrador())# vc pode checar o tamanho com len(self.mem) e acessar cada posicao
 							   # independentemente com self.mips.mem[i] dai para manipular os 32 bits podemos
 							   # mexer com os valores binarios e decimais
-		self.reg = [Registrador()] * 2**5
-		self.ULAbloqueada = False
+		self.reg = []
+		for i in range(0, 2**5):
+			self.reg.append(Registrador())
 		self.avancapc = False
-
-	def bloquearULA():
-		self.ULAbloqueada = True
-
-	def desbloquearULA():
-		self.ULAbloqueada = False
 
 	def read(self, filePath):
 		self.fr.read(filePath)
@@ -471,11 +479,14 @@ class Mips:
 		if not self.E5.bloqueado:
 			if not self.E5.desbloqueou:
 				print "E5 nao desbloqueou"
+				self.concluidas = self.concluidas + 1
 				if not self.E4.bloqueado:
 					if not self.E4.desbloqueou:
 						print "E4 nao desbloqueou"
 						self.E5.setInstrucao(self.E4.instrucao)
+						print "E4 nao desbloqueou - "+self.E5.InstName
 						self.E5.do()
+						print "E5 executou"
 						if not self.E3.bloqueado:
 							if not self.E3.desbloqueou:
 								print "E3 nao desbloqueou"
