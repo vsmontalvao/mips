@@ -42,7 +42,7 @@ class InstrucaoR(Instrucao):
 
 	def writeback(self):
 		self.mips.reg[eval(self.rd)].valor = self.mips.ULA
-		self.mips.reg[eval(self.rd)].desbloquear()
+		self.mips.addDesbloqueio(self.mips.reg[eval(self.rd)])
 
 class InstrucaoI(Instrucao):
 	
@@ -71,7 +71,7 @@ class Jmp(InstrucaoJ):
 	def memaccess(self):
 		self.mips.pc = self.targetAddress
 		self.mips.avancapc = False
-		self.mips.E1.desbloquear()
+		self.mips.addDesbloqueio(self.mips.E1)
 
 	def texto(self):    
 		return "jmp" + str(eval(self.targetAddress))
@@ -149,7 +149,7 @@ class Addi(InstrucaoI):
 
 	def writeback(self):
 		self.mips.reg[eval(self.rt)].valor = self.mips.ULA
-		self.mips.reg[eval(self.rt)].desbloquear()
+		self.mips.addDesbloqueio(self.mips.reg[eval(self.rt)])
 
 	def texto(self):
 		return "addi R" + str(eval(self.rt)) + ", R"+str(eval(self.rs)) + ", " + str(eval(self.immediate))
@@ -180,7 +180,7 @@ class Beq(InstrucaoI):
 			self.mips.avancapc = False
 		else:
 			self.mips.avancapc = True
-		self.mips.E1.desbloquear()
+		self.mips.addDesbloqueio(self.mips.E1)
 
 	def writeback(self):
 		pass
@@ -214,7 +214,7 @@ class Ble(InstrucaoI):
 			self.mips.avancapc = False
 		else:
 			self.mips.avancapc = True
-		self.mips.E1.desbloquear()
+		self.mips.addDesbloqueio(self.mips.E1)
 
 	def writeback(self):
 		pass
@@ -248,7 +248,7 @@ class Bne(InstrucaoI):
 			self.mips.avancapc = False
 		else:
 			self.mips.avancapc = True
-		self.mips.E1.desbloquear()
+		self.mips.addDesbloqueio(self.mips.E1)
 
 	def writeback(self):
 		pass
@@ -265,14 +265,18 @@ class Lw(InstrucaoI):
 		if self.mips.reg[eval(self.rs)].bloqueado | self.mips.reg[eval(self.rt)].bloqueado:
 			self.mips.E2.esperarClock()
 		else:
-			self.mips.Imm = self.immediate
-
-			self.mips.reg[eval(self.rt)].bloquear()
-			self.resultado = self.mips.mem[eval(self.mips.reg[eval(self.rs)].valor) + eval(self.mips.Imm)].valor
+			self.destino = eval(self.mips.reg[eval(self.rs)].valor) + eval(self.immediate)
+			if self.mips.mem[self.destino].bloqueado:
+				self.mips.E2.esperarClock()
+			else:
+				self.mips.Imm = self.immediate
+				self.resultado = self.mips.mem[self.destino].valor
+				self.mips.reg[eval(self.rt)].bloquear()
+				self.mips.addListaMemoria(self.destino)
 
 	def writeback(self):
 		self.mips.reg[eval(self.rt)].valor = self.resultado
-		self.mips.reg[eval(self.rt)].desbloquear()
+		self.mips.addDesbloqueio(self.mips.reg[eval(self.rt)])
 
 	def texto(self):
 		return "lw R" + str(eval(self.rt)) + ", " + str(eval(self.immediate)) + "(R" + str(eval(self.rs)) + ")"
@@ -295,10 +299,8 @@ class Sw(InstrucaoI):
 
 	def memaccess(self):
 		self.mips.mem[self.destino].valor = self.resultado
-		self.mips.mem[self.destino].desbloquear()
-
-	def writeback(self):
-		pass
+		self.mips.addDesbloqueio(self.mips.mem[self.destino])
+		self.mips.addListaMemoria(self.destino)
 
 	def texto(self):
 		return "sw R" + str(eval(self.rt)) + ", " + str(eval(self.immediate)) + "(R" + str(eval(self.rs)) + ")"
@@ -425,12 +427,33 @@ class Mips:
 		for i in range(0, 2**5):
 			self.reg.append(Registrador())
 		self.avancapc = False
+		self.listaDeDesbloqueio = []
+		self.listaMemoria = []
+
+	def addListaMemoria(self, endereco):
+		self.listaMemoria.append([endereco, str(eval(self.mem[endereco].valor))])
+		if len(self.listaMemoria) > 4:
+			self.listaMemoria = self.listaMemoria[-4:]
+
+	def getListaMemoria(self, i):
+		if len(self.listaMemoria) < i:
+			return ["", ""]
+		else:
+			return self.listaMemoria[-i]
+
+	def addDesbloqueio(self, destino):
+		self.listaDeDesbloqueio.append(destino)
+
+	def ClockDesbloquear(self):
+		for i in self.listaDeDesbloqueio:
+			i.desbloquear()
+		self.listaDeDesbloqueio = []
 
 	def read(self, filePath):
 		self.fr.read(filePath)
 
 	def inicio(self):
-		self.clock = -1
+		self.clock = 0
 		self.pc = bin(0)
 		self.concluidas = 0
 		self.produtividade = 0
@@ -466,10 +489,12 @@ class Mips:
 
 	def proxEstagio(self):
 		self.clock = self.clock + 1
+		self.ClockDesbloquear()
 		if not self.E5.bloqueado:
 			if not self.E5.desbloqueou:
 				print "E5 nao desbloqueou"
-				self.concluidas = self.concluidas + 1
+				if self.E5.instrucao.__class__.__name__ != "Nop":
+					self.concluidas = self.concluidas + 1
 				if not self.E4.bloqueado:
 					if not self.E4.desbloqueou:
 						print "E4 nao desbloqueou"
@@ -534,7 +559,7 @@ class Mips:
 				self.E5.desbloqueou = False
 				self.E5.do()
 
-		print self.E1.InstName
+		self.produtividade = float(self.concluidas)/self.clock
 		self.atualizarLabels()
 
 
@@ -558,18 +583,18 @@ class Mips:
 			self.setText(self.view.E5_controle, self.E5.SinControle, "")
 
 			self.view.lclock["text"] = self.clock
-			self.view.lpc["text"] = str(eval(self.pc))#self.pc[2:]
+			self.view.lpc["text"] = str(eval(self.pc))
 			self.view.lconcluidas["text"] = self.concluidas
-			self.view.lprodutividade["text"] = self.produtividade
+			self.view.lprodutividade["text"] = "{0:.2f}".format(100*self.produtividade)+"%"
 
-			self.setText(self.view.lend1, self.end1, "")
-			self.setText(self.view.lval1, self.val1, "?")
-			self.setText(self.view.lend2, self.end2, "")
-			self.setText(self.view.lval2, self.val2, "?")
-			self.setText(self.view.lend3, self.end3, "")
-			self.setText(self.view.lval3, self.val3, "?")
-			self.setText(self.view.lend4, self.end4, "")
-			self.setText(self.view.lval4, self.val4, "?")
+			self.setText(self.view.lend1, self.getListaMemoria(1)[0], "")
+			self.setText(self.view.lval1, self.getListaMemoria(1)[1], "?")
+			self.setText(self.view.lend2, self.getListaMemoria(2)[0], "")
+			self.setText(self.view.lval2, self.getListaMemoria(2)[1], "?")
+			self.setText(self.view.lend3, self.getListaMemoria(3)[0], "")
+			self.setText(self.view.lval3, self.getListaMemoria(3)[1], "?")
+			self.setText(self.view.lend4, self.getListaMemoria(4)[0], "")
+			self.setText(self.view.lval4, self.getListaMemoria(4)[1], "?")
 
 			self.view.lr0["text"] = str(eval(self.reg[0].valor))
 			self.view.lr1["text"] = str(eval(self.reg[1].valor))
