@@ -422,9 +422,11 @@ class Mips:
 		self.fr = FileReader()   
 
 	def addListaMemoria(self, endereco):
+		cont = -1
 		for i in self.listaMemoria:
+			cont = cont + 1
 			if i[0] == endereco:
-				del self.listaMemoria[i]
+				del self.listaMemoria[cont]
 		self.listaMemoria.append([endereco, str(eval(self.mem[endereco].valor))])
 		if len(self.listaMemoria) > 4:
 			self.listaMemoria = self.listaMemoria[-4:]
