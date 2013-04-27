@@ -3,7 +3,7 @@ from filereader import FileReader
 
 class Registrador:
 	def __init__(self):
-		self.valor = 0
+		self.valor = bin(0)
 		self.bloqueado = False
 
 	def bloquear(self):
@@ -78,7 +78,7 @@ class Add(InstrucaoR):
 		InstrucaoR.__init__(self, mips, instrucao)
 
 	def execute(self):
-		self.mips.ULA = bin(self.mips.A + self.mips.B)
+		self.mips.ULA = bin(eval(self.mips.A) + eval(self.mips.B))
 
 	def texto(self):
 		return "add R" + str(eval(self.rd)) + ", R"+str(eval(self.rs)) + ", R" + str(eval(self.rt))
@@ -89,7 +89,7 @@ class Mul(InstrucaoR):
 		InstrucaoR.__init__(self, mips, instrucao)
 
 	def execute(self):
-		self.mips.ULA = bin(self.mips.A * self.mips.B)
+		self.mips.ULA = bin(eval(self.mips.A) * eval(self.mips.B))
 
 	def texto(self):
 		return "mul R" + str(eval(self.rd)) + ", R"+str(eval(self.rs)) + ", R" + str(eval(self.rt))
@@ -120,7 +120,7 @@ class Sub(InstrucaoR):
 		InstrucaoR.__init__(self, mips, instrucao)
 
 	def execute(self):
-		self.mips.ULA = bin(self.mips.A - self.mips.B)
+		self.mips.ULA = bin(eval(self.mips.A) - eval(self.mips.B))
 
 	def texto(self):
 		return "sub R" + str(eval(self.rd)) + ", R"+str(eval(self.rs)) + ", R" + str(eval(self.rt))
@@ -140,7 +140,7 @@ class Addi(InstrucaoI):
 		self.mips.reg[eval(self.rt)].bloquear()
 
 	def execute(self):
-		self.mips.ULA = bin(self.mips.A + eval(self.mips.Imm))
+		self.mips.ULA = bin(eval(self.mips.A) + eval(self.mips.Imm))
 		# print "Executou addi - ULA:"+str(eval(self.mips.ULA))
 
 	def memaccess(self):
@@ -173,7 +173,7 @@ class Beq(InstrucaoI):
 			self.equal = True
 			self.mips.ULA = bin(eval(self.mips.pc) + 4 + eval(self.mips.Imm))
 
-	def memacess(self):
+	def memaccess(self):
 		if self.equal == True:
 			self.mips.pc = self.mips.ULA
 			mips.avancapc = False
@@ -207,7 +207,7 @@ class Ble(InstrucaoI):
 			self.equal = True
 			self.mips.ULA = self.mips.Imm      
 
-	def memacess(self):
+	def memaccess(self):
 		if self.equal == True:
 			self.mips.pc = self.mips.ULA
 			mips.avancapc = False
@@ -241,7 +241,7 @@ class Bne(InstrucaoI):
 			self.equal = True
 			self.mips.pc = bin(eval(self.mips.pc) + 4 + eval(self.mips.Imm))
 
-	def memacess(self):
+	def memaccess(self):
 		if self.equal == True:
 			self.mips.pc = self.mips.ULA
 			mips.avancapc = False
@@ -269,7 +269,7 @@ class Lw(InstrucaoI):
 			self.mips.Imm = self.immediate
 
 			self.mips.reg[eval(self.rt)].bloquear()
-			self.resultado = self.mips.mem[eval(self.mips.reg[eval(self.rs)].valor) + self.mips.Imm].valor
+			self.resultado = self.mips.mem[eval(self.mips.reg[eval(self.rs)].valor) + eval(self.mips.Imm)].valor
 
 	def execute(self):
 		pass
@@ -286,26 +286,22 @@ class Sw(InstrucaoI):
 		InstrucaoI.__init__(self, mips, instrucao)
 
 	def decode(self):	
-		print "DECOD SW: "
 		if self.mips.reg[eval(self.rs)].bloqueado | self.mips.reg[eval(self.rt)].bloqueado:
 			self.mips.E2.esperarClock()
 		else:
-			self.mips.A = self.mips.reg[eval(self.rs)].valor
-			self.mips.B = self.mips.reg[eval(self.rt)].valor
 			self.mips.Imm = self.immediate
-			self.destino = 	eval(self.mips.reg[eval(self.rs)].valor) + self.mips.Imm
+			self.destino = 	eval(self.mips.reg[eval(self.rs)].valor) + eval(self.mips.Imm)
+
 			if self.mips.mem[self.destino].bloqueado:
 				self.mips.E2.esperarClock()
 			else:
 				self.mips.mem[self.destino].bloquear()
 				self.resultado = self.mips.reg[eval(self.rt)].valor
-		print "DECOD SW COMPLETO"
 
 	def execute(self):
-		print "SW: EXECUTOU OK"
 		pass
 
-	def memacess(self):
+	def memaccess(self):
 		self.mips.mem[self.destino].valor = self.resultado
 		self.mips.mem[self.destino].desbloquear()
 
@@ -495,7 +491,9 @@ class Mips:
 							if not self.E3.desbloqueou:
 								print "E3 nao desbloqueou"
 								self.E4.setInstrucao(self.E3.instrucao)
+								print "ANTES DE E4: " + self.E4.InstName
 								self.E4.do()
+								print "DEPOIS DE E4"
 								if not self.E2.bloqueado:
 									if not self.E2.desbloqueou:
 										print "E2 nao desbloqueou"
@@ -567,7 +565,7 @@ class Mips:
 			self.setText(self.view.E5_controle, self.E5.SinControle, "")
 
 			self.view.lclock["text"] = self.clock
-			self.view.lpc["text"] = self.pc[2:]
+			self.view.lpc["text"] = str(eval(self.pc))#self.pc[2:]
 			self.view.lconcluidas["text"] = self.concluidas
 			self.view.lprodutividade["text"] = self.produtividade
 
@@ -580,35 +578,35 @@ class Mips:
 			self.setText(self.view.lend4, self.end4, "")
 			self.setText(self.view.lval4, self.val4, "?")
 
-			self.view.lr0["text"] = str(self.reg[0].valor)
-			self.view.lr1["text"] = str(self.reg[1].valor)
-			self.view.lr2["text"] = str(self.reg[2].valor)
-			self.view.lr3["text"] = str(self.reg[3].valor)
-			self.view.lr4["text"] = str(self.reg[4].valor)
-			self.view.lr5["text"] = str(self.reg[5].valor)
-			self.view.lr6["text"] = str(self.reg[6].valor)
-			self.view.lr7["text"] = str(self.reg[7].valor)
-			self.view.lr8["text"] = str(self.reg[8].valor)
-			self.view.lr9["text"] = str(self.reg[9].valor)
-			self.view.lr10["text"] = str(self.reg[10].valor)
-			self.view.lr11["text"] = str(self.reg[11].valor)
-			self.view.lr12["text"] = str(self.reg[12].valor)
-			self.view.lr13["text"] = str(self.reg[13].valor)
-			self.view.lr14["text"] = str(self.reg[14].valor)
-			self.view.lr15["text"] = str(self.reg[15].valor)
-			self.view.lr16["text"] = str(self.reg[16].valor)
-			self.view.lr17["text"] = str(self.reg[17].valor)
-			self.view.lr18["text"] = str(self.reg[18].valor)
-			self.view.lr19["text"] = str(self.reg[19].valor)
-			self.view.lr20["text"] = str(self.reg[20].valor)
-			self.view.lr21["text"] = str(self.reg[21].valor)
-			self.view.lr22["text"] = str(self.reg[22].valor)
-			self.view.lr23["text"] = str(self.reg[23].valor)
-			self.view.lr24["text"] = str(self.reg[24].valor)
-			self.view.lr25["text"] = str(self.reg[25].valor)
-			self.view.lr26["text"] = str(self.reg[26].valor)
-			self.view.lr27["text"] = str(self.reg[27].valor)
-			self.view.lr28["text"] = str(self.reg[28].valor)
-			self.view.lr29["text"] = str(self.reg[29].valor)
-			self.view.lr30["text"] = str(self.reg[30].valor)
-			self.view.lr31["text"] = str(self.reg[31].valor)
+			self.view.lr0["text"] = str(eval(self.reg[0].valor))
+			self.view.lr1["text"] = str(eval(self.reg[1].valor))
+			self.view.lr2["text"] = str(eval(self.reg[2].valor))
+			self.view.lr3["text"] = str(eval(self.reg[3].valor))
+			self.view.lr4["text"] = str(eval(self.reg[4].valor))
+			self.view.lr5["text"] = str(eval(self.reg[5].valor))
+			self.view.lr6["text"] = str(eval(self.reg[6].valor))
+			self.view.lr7["text"] = str(eval(self.reg[7].valor))
+			self.view.lr8["text"] = str(eval(self.reg[8].valor))
+			self.view.lr9["text"] = str(eval(self.reg[9].valor))
+			self.view.lr10["text"] = str(eval(self.reg[10].valor))
+			self.view.lr11["text"] = str(eval(self.reg[11].valor))
+			self.view.lr12["text"] = str(eval(self.reg[12].valor))
+			self.view.lr13["text"] = str(eval(self.reg[13].valor))
+			self.view.lr14["text"] = str(eval(self.reg[14].valor))
+			self.view.lr15["text"] = str(eval(self.reg[15].valor))
+			self.view.lr16["text"] = str(eval(self.reg[16].valor))
+			self.view.lr17["text"] = str(eval(self.reg[17].valor))
+			self.view.lr18["text"] = str(eval(self.reg[18].valor))
+			self.view.lr19["text"] = str(eval(self.reg[19].valor))
+			self.view.lr20["text"] = str(eval(self.reg[20].valor))
+			self.view.lr21["text"] = str(eval(self.reg[21].valor))
+			self.view.lr22["text"] = str(eval(self.reg[22].valor))
+			self.view.lr23["text"] = str(eval(self.reg[23].valor))
+			self.view.lr24["text"] = str(eval(self.reg[24].valor))
+			self.view.lr25["text"] = str(eval(self.reg[25].valor))
+			self.view.lr26["text"] = str(eval(self.reg[26].valor))
+			self.view.lr27["text"] = str(eval(self.reg[27].valor))
+			self.view.lr28["text"] = str(eval(self.reg[28].valor))
+			self.view.lr29["text"] = str(eval(self.reg[29].valor))
+			self.view.lr30["text"] = str(eval(self.reg[30].valor))
+			self.view.lr31["text"] = str(eval(self.reg[31].valor))
