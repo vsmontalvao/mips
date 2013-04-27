@@ -142,7 +142,7 @@ class Addi(InstrucaoI):
 			self.mips.A = self.mips.reg[eval(self.rs)].valor
 			self.mips.B = self.mips.reg[eval(self.rt)].valor
 			self.mips.Imm = self.immediate
-		self.mips.reg[eval(self.rt)].bloquear()
+			self.mips.reg[eval(self.rt)].bloquear()
 
 	def execute(self):
 		self.mips.ULA = bin(eval(self.mips.A) + eval(self.mips.Imm))
