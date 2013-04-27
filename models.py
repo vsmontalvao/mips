@@ -398,9 +398,8 @@ class InstructionExecute(Estagio):
 			if self.cont == 0:
 				self.instrucao.execute()
 				self.cont = 1
-				self.bloquear()
+				self.esperarClock()
 			else:
-				self.desbloquear()
 				self.cont = 0
 		else:
 			self.instrucao.execute()
