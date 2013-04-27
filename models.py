@@ -170,7 +170,7 @@ class Beq(InstrucaoI):
 
 	def execute(self):
 		self.equal = False
-		if eval(self.mips.reg[eval(self.mips.A)].valor) == eval(self.mips.reg[eval(self.mips.B)].valor):
+		if eval(self.mips.A) == eval(self.mips.B):
 			self.equal = True
 			self.mips.ULA = bin(eval(self.mips.pc) + 4 + eval(self.mips.Imm))
 
@@ -203,18 +203,10 @@ class Ble(InstrucaoI):
 			self.mips.E1.bloquear()
 
 	def execute(self):
-		print "ANTES 1"
 		self.equal = False
-		print "ANTES 2"
-		print " A: "+str(eval(self.mips.A))
-		print " B: "+str(eval(self.mips.B))
-		if eval(self.mips.reg[eval(self.mips.A)].valor) <= eval(self.mips.reg[eval(self.mips.B)].valor):
-			print "ANTES 3"
+		if eval(self.mips.A) <= eval(self.mips.B):
 			self.equal = True
-			print "ANTES 4"
-			self.mips.ULA = self.mips.Imm      
-			print "ANTES 5"
-		print "DEPOIS 6"
+			self.mips.ULA = self.mips.Imm
 
 	def memaccess(self):
 		if self.equal == True:
@@ -246,7 +238,7 @@ class Bne(InstrucaoI):
 
 	def execute(self):
 		self.equal = False
-		if eval(self.mips.reg[eval(self.mips.A)].valor) != eval(self.mips.reg[eval(self.mips.B)].valor):
+		if eval(self.mips.A) != eval(self.mips.B):
 			self.equal = True
 			self.mips.pc = bin(eval(self.mips.pc) + 4 + eval(self.mips.Imm))
 
@@ -474,7 +466,6 @@ class Mips:
 
 	def proxEstagio(self):
 		self.clock = self.clock + 1
-
 		if not self.E5.bloqueado:
 			if not self.E5.desbloqueou:
 				print "E5 nao desbloqueou"
@@ -484,7 +475,9 @@ class Mips:
 						print "E4 nao desbloqueou"
 						self.E5.setInstrucao(self.E4.instrucao)
 						print "E4 nao desbloqueou - "+self.E5.InstName
+						print str(self.clock)+":1 " + str(eval(self.reg[10].valor))
 						self.E5.do()
+						print str(self.clock)+":2 " + str(eval(self.reg[10].valor))
 						print "E5 executou"
 						if not self.E3.bloqueado:
 							if not self.E3.desbloqueou:
